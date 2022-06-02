@@ -2,6 +2,7 @@ from cgi import test
 import threading
 import paho.mqtt.client as mqtt
 from threading import Thread, Event
+from mycamera import Mycam
 
 
 class MqttWorker:
@@ -11,6 +12,8 @@ class MqttWorker:
         self.client.on_message = self.on_message
 
         self.exit_event = Event()
+        self.camera = Mycam(self.client)
+        self.camera.start()
 
         # self.HC_SR04 = HC_SR04(self.client)
         # self.HC_SR04.start()
