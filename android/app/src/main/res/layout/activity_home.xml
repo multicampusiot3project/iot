@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".HomeActivity">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="쇼핑리스트 작성"
+        tools:layout_editor_absoluteX="-2dp"
+        tools:layout_editor_absoluteY="47dp"
+        android:textSize="40dp"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="쇼핑 조회"
+        tools:layout_editor_absoluteX="-2dp"
+        tools:layout_editor_absoluteY="47dp"
+        android:textSize="40dp"/>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="쇼핑하기"
+        tools:layout_editor_absoluteX="-2dp"
+        tools:layout_editor_absoluteY="47dp"
+        android:textSize="40dp"/>
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="로그아웃"
+        tools:layout_editor_absoluteX="-2dp"
+        tools:layout_editor_absoluteY="47dp"
+        android:textSize="40dp"/>
+
+
+
+</LinearLayout>
