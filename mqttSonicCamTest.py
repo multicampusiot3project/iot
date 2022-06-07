@@ -87,14 +87,14 @@ try:
             print
             gpio.output(led1, gpio.HIGH)
             sleep(1.4)
-        
-    
+
+
 except KeyboardInterrupt:
-    pass
-finally:
     with picamera.Picamera() as camera:
         camera.stop_preview()
         print("카메라 정지")
     sleep(0.2)
+    pass
+finally:
     print("종료")
     gpio.cleanup()
