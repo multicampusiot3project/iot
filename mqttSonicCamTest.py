@@ -90,7 +90,7 @@ try:
 
 
 except KeyboardInterrupt:
-    with picamera.Picamera() as camera:
+    with picamera.PiCamera() as camera:
         camera.stop_preview()
         print("카메라 정지")
     sleep(0.2)
