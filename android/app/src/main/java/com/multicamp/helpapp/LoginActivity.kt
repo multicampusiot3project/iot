@@ -17,16 +17,10 @@ import org.json.JSONObject
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity(){
-    var mymqtt:MyMqtt?=null
-    val server_uri="tcp://13.52.187.248:1883"
-    var udpThread:Thread?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        mymqtt= MyMqtt(this,server_uri)
-        mymqtt?.mysetCallback(::onReceived)
-        mymqtt?.connect(arrayOf<String>("iot/#"))
         loginSubmit.setOnClickListener {
             thread{
                 var jsonobj=JSONObject()

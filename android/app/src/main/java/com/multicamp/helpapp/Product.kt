@@ -10,7 +10,9 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -18,14 +20,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_product.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import org.eclipse.paho.client.mqttv3.MqttMessage
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Product : AppCompatActivity() {
+    val sub_topic = "android/#"
+    val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
+    var mymqtt : MyMqtt? = null
 
     // ViewBinding
     // Permisisons
@@ -36,14 +39,17 @@ class Product : AppCompatActivity() {
     val PERMISSIONS_REQUEST = 100
     // Request Code
     private val BUTTON2 = 200
-    private val BUTTON3 = 300
-    private val BUTTON4 = 400
-    private val BUTTON5 = 500
-    // 원본 사진이 저장되는 Uri    private var photoUri: Uri? = null
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //Mqtt통신을 수행할 Mqtt객체를 생성
+        mymqtt = MyMqtt(this, server_uri)
+        //블커에서 메시지가 전달되면 호출될 메소드를 넘기기
+        mymqtt?.mysetCallback(::onReceived)
+        //브로커연결
+        mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
 
@@ -102,23 +108,41 @@ class Product : AppCompatActivity() {
     private fun newJpgFileName() : String {
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
         val filename = sdf.format(System.currentTimeMillis())
-        return "${filename}.jpg"} private fun saveBitmapAsJPGFile(bitmap: Bitmap) {
+        return "${filename}.jpg"
+    }
+    private fun saveBitmapAsJPGFile(bitmap: Bitmap) {
         val path = File(filesDir, "image")
         if(!path.exists()){
             path.mkdirs()
         }
         val file = File(path, newJpgFileName())
-        var imageFile: OutputStream? = null
-        try{        file.createNewFile()
+        var imageFile: FileOutputStream? = null
+        try{
+            file.createNewFile()
             imageFile = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, imageFile)
-            imageFile.close()
             Toast.makeText(this, file.absolutePath, Toast.LENGTH_LONG).show()
+            Log.d("test",file.absolutePath)
+
+
+            val stream:ByteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val imagedata :String = Base64.encodeToString(stream.toByteArray(),Base64.DEFAULT)
+            Log.d("test",imagedata)
+
+            mymqtt?.publish("android/product",imagedata)
+            print(imageFile)
+            imageFile.close()
         }catch (e: Exception){
             null
         }}
 
-
+    fun onReceived(topic:String,message: MqttMessage){
+        //토픽의 수신을 처리
+        //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
+        // 모션 detact가 전달되면 Notification도 발생시키기.....
+        val msg = String(message.payload)
+    }
 
 
 }

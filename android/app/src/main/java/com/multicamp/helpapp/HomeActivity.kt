@@ -19,6 +19,8 @@ class HomeActivity : AppCompatActivity() {
         mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
 
 
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
