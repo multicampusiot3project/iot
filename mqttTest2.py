@@ -1,6 +1,7 @@
 from cgi import test
 import threading
 import paho.mqtt.client as mqtt
+import io
 from threading import Thread, Event
 
 count = 0
