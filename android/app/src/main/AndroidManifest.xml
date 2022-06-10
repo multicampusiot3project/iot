@@ -45,6 +45,7 @@
 
             </meta-data>
         </provider>
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
 </manifest>
