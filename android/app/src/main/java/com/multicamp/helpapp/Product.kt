@@ -26,8 +26,7 @@ class Product : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
-        mymqtt= MyMqtt(this,server_uri)
-        mymqtt?.connect(arrayOf<String>(sub_topic))
+
         takePictureIntent()
     }
 
