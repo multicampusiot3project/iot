@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         mymqtt= MyMqtt(this,server_uri)
-        mymqtt?.setCallback(::onReceived)
+        mymqtt?.mysetCallback(::onReceived)
         mymqtt?.connect(arrayOf<String>("iot/#"))
         loginSubmit.setOnClickListener {
             thread{

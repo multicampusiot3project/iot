@@ -31,22 +31,25 @@ class MyMqtt(context: Context, uri:String) {
 
         })
     }
-    fun setCallback(callback: (topic:String,message:MqttMessage)->Unit) {
-        mqttClient.setCallback(object :MqttCallback{
-            override fun messageArrived(topic: String?, message: MqttMessage?) {
-                Log.d("test","connectionLost")
-                // 메시지가 전송되면 호출 - 액티비티의 메소드
-                callback(topic!!, message!!)
+    fun mysetCallback(callback: (topic:String,message:MqttMessage)->Unit){
+        mqttClient.setCallback(object:MqttCallback{
+            override fun connectionLost(cause: Throwable?) {
+                Log.d("mymqtt","connectionLost")
             }
 
-            override fun connectionLost(cause: Throwable?) {
-                Log.d("test","connectionLost")
+            override fun messageArrived(topic: String?, message: MqttMessage?) {
+                //메시지가 전송 되면 호출 - 액티비티의 메소드
+                //메시지가 전송되면 처리할 일들을 여기서 구현해도 된다.
+                // - 액티비티의 구성요소에 메시지로 전달되는 내욜을 출력하거나
+                //사용하고 싶어서 액티비티에 구현한 메소드를 호출할 예정
+                Log.d("mymqtt","messageArrived")
+                callback(topic!!,message!!)
+                //EditText작업???? 힘듬
             }
 
             override fun deliveryComplete(token: IMqttDeliveryToken?) {
-                Log.d("test","connectionLost")
+                Log.d("mymqtt","deliveryComplete")
             }
-
         })
     }
 
