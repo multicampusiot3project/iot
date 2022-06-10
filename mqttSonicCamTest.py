@@ -1,3 +1,4 @@
+from tkinter import OFF
 import paho.mqtt.client as mqtt
 from threading import Thread, Event
 from time import sleep
@@ -31,7 +32,7 @@ gpio.output(trig2, False)
 
 with picamera.PiCamera() as camera:
     camera.start_preview()
-time.sleep(3)
+    time.sleep(3)
 
 try:
     while True:
@@ -74,13 +75,16 @@ try:
             if count1 <= 5:
                 count1 += 1
                 with picamera.PiCamera() as camera:
-                    camera.hflip
-                    camera.vflip
+                    sleep(0.5)
+                    camera.rotation = 180
+                    camera.brightness = 55
+                    camera.awb_mode = 'auto'
                     camera.capture("/home/pi/mywork/test123.jpg")
                     file = open("/home/pi/mywork/test123.jpg", "rb")
                     filedata = file.read()
                     bytefiledata = bytearray(filedata)
                     publisher.single("mydata/file", bytefiledata, hostname="13.52.187.248")
+                    print("전송완료")
             else:
                 count1 = 0
         if distance1 >= 100:
