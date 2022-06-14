@@ -1,7 +1,5 @@
 package com.multicamp.helpapp
 
-
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -9,20 +7,16 @@ import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import java.util.*
 
 
 class HomeActivity : AppCompatActivity() {
-    var stt_intent: Intent? = null
-    var recognizer:SpeechRecognizer? = null
-    var ttsObj: TextToSpeech? = null
-    private var btnPressTime: Long = 0
-    private val backBtnTime: Long = 0
-    var detector: GestureDetector? = null
+    private var sttIntent: Intent? = null
+    private var recognizer:SpeechRecognizer? = null
+    private var ttsObj: TextToSpeech? = null
+    private var detector: GestureDetector? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,23 +29,21 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
-        stt_intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        stt_intent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
-        stt_intent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
+        sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
 
         val utteranceId = this.hashCode().toString() + "0"
-        var mBackWait:Long = 0
-        var clickTime: Long = 0
 
         button.setOnClickListener {
 
-            ttsObj?.speak("상품검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("장바구니 화면으로 이동하는 버튼입니다. 꾹 누르면 장바구니 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
         }
         button.setOnLongClickListener {
 
             val listIntent = Intent(this, MainActivity::class.java)
-            ttsObj?.speak("쇼핑 검색 화면으로 이동합니다. ", TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("장바구니 화면으로 이동합니다. ", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
             startActivity(listIntent)
             false
@@ -59,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
 
         button2.setOnClickListener {
 
-            ttsObj?.speak("상품검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
         button2.setOnLongClickListener {
@@ -67,7 +59,6 @@ class HomeActivity : AppCompatActivity() {
             val searchIntent = Intent(this, Product::class.java)
             ttsObj?.speak("쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
-            mBackWait = System.currentTimeMillis()
             startActivity(searchIntent)
             false
         }
@@ -83,7 +74,6 @@ class HomeActivity : AppCompatActivity() {
             val shoppingIntent = Intent(this, location::class.java)
             ttsObj?.speak("쇼핑 안내 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
-            mBackWait = System.currentTimeMillis()
             startActivity(shoppingIntent)
             false
         }
