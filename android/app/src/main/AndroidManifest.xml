@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.multicamp.helpapp">
-
+    <!-- tts 권한 설정 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- mqtt 권한 설정 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 디바이스가 sleep 상태에 빠지지 않도록 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 카메라 권한 설정 -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--gps 위치 권한 허용 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <queries>
         <intent>
@@ -24,27 +29,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Helpapp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Product"></activity>
+        <activity android:name=".location"></activity>
+        <activity android:name=".Product" />
         <activity android:name=".LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".HomeActivity" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.blacklog.takepicture.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths">
-
-            </meta-data>
+                android:resource="@xml/filepaths"></meta-data>
         </provider>
+        <!-- mqtt service 설정 -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
