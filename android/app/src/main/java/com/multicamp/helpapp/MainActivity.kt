@@ -21,7 +21,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var permission_state = false
-    var stt_intent: Intent? = null
+    var sttIntent: Intent? = null
     var recognizer:SpeechRecognizer? = null
     var edittool:EditText? = null
     var editNum:EditText? = null
@@ -51,9 +51,9 @@ class MainActivity : AppCompatActivity() {
                     1000
             )
         }
-        stt_intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        stt_intent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
-        stt_intent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
+        sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
         val nextIntent= Intent(this, HomeActivity::class.java)
         var listener = (object : RecognitionListener{
 
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         btnvoice.setOnClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(listener)
-            recognizer?.startListening(stt_intent)
+            recognizer?.startListening(sttIntent)
         }
 
 
