@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> {
 
-                        ttsObj?.speak("1개 상품 리스트가 작성되었습니다.",TextToSpeech.QUEUE_FLUSH,null,
+                        ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $voiceNum 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
                                 utteranceId)
                     }
                         }

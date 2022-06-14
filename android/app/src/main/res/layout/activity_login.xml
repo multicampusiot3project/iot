@@ -40,7 +40,7 @@
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
         >
-        <EditText
+        <Button
             android:id="@+id/loginID"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:inputType="textPersonName"
             android:hint="ID"
             />
-        <EditText
+        <Button
             android:id="@+id/loginPW"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

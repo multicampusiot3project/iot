@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -18,9 +20,22 @@ import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity(){
 
+    var stt_intent: Intent? = null
+    var recognizer: SpeechRecognizer? = null
+    var ttsObj: TextToSpeech? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        loginID.setOnClickListener {
+
+        }
+        loginPW.setOnClickListener {
+            
+        }
+
+
         loginSubmit.setOnClickListener {
             thread{
                 var jsonobj=JSONObject()
