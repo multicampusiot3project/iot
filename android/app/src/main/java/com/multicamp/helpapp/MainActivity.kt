@@ -95,6 +95,9 @@ class MainActivity : AppCompatActivity() {
                         results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
                 count ++
 
+                // 상품리스트를 db에 저장
+                var list:ArrayList<String>
+
                 for(i in data.indices){
                     edittool?.setText(data.get(i))
                 }
@@ -102,29 +105,23 @@ class MainActivity : AppCompatActivity() {
                 editNum?.setText(textcount)
                 var voiceMsg:String = edittool?.text.toString()
                 var voiceNum:String = editNum?.text.toString()
+                val utteranceId = this.hashCode().toString() + ""
                 when (voiceMsg) {
                     "완료" -> {
                         //음성이 발생되면 처리하고 싶은 기능을 구현
-                        val utteranceId = this.hashCode().toString() + "1"
-                        ttsObj?.setPitch(4f) //음성톤을 기본보다 2배 올려준다.
-                        ttsObj?.setSpeechRate(1.5f)
                         ttsObj?.speak("쇼핑을 완료하고 메인화면으로 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
                                 utteranceId)
                         startActivity(nextIntent)
                     }
                     "취소" -> {
                         //음성이 발생되면 처리하고 싶은 기능을 구현
-                        val utteranceId = this.hashCode().toString() + "1"
-                        ttsObj?.setPitch(4f) //음성톤을 기본보다 2배 올려준다.
-                        ttsObj?.setSpeechRate(1.5f)
+
                         ttsObj?.speak("취소하고 메인화면을 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
                                 utteranceId)
                         startActivity(nextIntent)
                     }
                     else -> {
-                        val utteranceId = this.hashCode().toString() + "1"
-                        ttsObj?.setPitch(4f) //음성톤을 기본보다 2배 올려준다.
-                        ttsObj?.setSpeechRate(1.5f)
+
                         ttsObj?.speak("1개 상품 리스트가 작성되었습니다.",TextToSpeech.QUEUE_FLUSH,null,
                                 utteranceId)
                     }
