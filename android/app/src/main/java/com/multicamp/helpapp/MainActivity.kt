@@ -14,9 +14,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import org.json.JSONObject
 import java.util.*
-
+import kotlin.concurrent.thread
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +58,74 @@ class MainActivity : AppCompatActivity() {
         sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
         sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
         val nextIntent= Intent(this, HomeActivity::class.java)
+        var clickLister = (object : RecognitionListener{
+
+            override fun onReadyForSpeech(params: Bundle?) {
+                printToast("음성인식을 시작합니다.")
+            }
+            override fun onBeginningOfSpeech() {
+                Log.d("recog","onBeginningOfSpeech")
+            }
+            override fun onRmsChanged(rmsdB: Float) {
+                Log.d("recog","onRmsChanged")
+            }
+            override fun onBufferReceived(buffer: ByteArray?) {
+                Log.d("recog","onBufferReceived")
+            }
+            override fun onPartialResults(partialResults: Bundle?) {
+                Log.d("recog","onPartialResults")
+            }
+            override fun onEvent(eventType: Int, params: Bundle?) {
+                Log.d("recog","onEvent")
+            }
+            override fun onEndOfSpeech() {
+                Log.d("recog","onEndOfSpeech")
+            }
+            override fun onError(error: Int) {
+                var message =""
+                when(error){
+                    SpeechRecognizer.ERROR_AUDIO -> message = "오디오 에러"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음";
+                    SpeechRecognizer.ERROR_CLIENT -> message = "클라이언트 에러"
+                    SpeechRecognizer.ERROR_NETWORK ->  message = "네트워크 에러"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> message = "다른 작업 처리 중이라 바쁨"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> message = "말을 너무 길게 해서 시간초과"
+                }
+                Log.d("recog",message)
+            }
+            override fun onResults(results: Bundle?) {
+                var  data:ArrayList<String> =
+                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
+
+                for(i in data.indices){
+                    searchText.setText(data.get(i))
+                }
+
+                thread{
+                    val utteranceId = this.hashCode().toString() + ""
+                    var jsonobj= JSONObject()
+                    jsonobj.put("name",searchText.text)
+                    val client= OkHttpClient()
+                    val jsondata=jsonobj.toString()
+                    val builder= Request.Builder()
+                    val url="http://13.52.187.248:8000/searchProduct"
+                    builder.url(url)
+                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                    val myrequest: Request =builder.build()
+                    val response: Response =client.newCall(myrequest).execute()
+                    var result:String?=response.body()?.string()
+                    print(result)
+                    result = result?.replace("\""," ")?.trim()
+                    result = result?.replace("{", " ")
+                    result = result?.replace("}"," ")
+                    var result2 = result?.length.toString()
+                    Log.d("test",result.toString())
+                    ttsObj?.speak(result2 + "개의 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                }
+
+            }
+        })
+
         var listener = (object : RecognitionListener{
 
             override fun onReadyForSpeech(params: Bundle?) {
@@ -107,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                 var voiceNum:String = editNum?.text.toString()
                 val utteranceId = this.hashCode().toString() + ""
                 when (voiceMsg) {
+
                     "완료" -> {
                         //음성이 발생되면 처리하고 싶은 기능을 구현
                         ttsObj?.speak("쇼핑을 완료하고 메인화면으로 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
@@ -132,8 +204,15 @@ class MainActivity : AppCompatActivity() {
         })
         btnvoice.setOnClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
+            recognizer?.setRecognitionListener(clickLister)
+            recognizer?.startListening(sttIntent)
+        }
+
+        btnvoice.setOnLongClickListener {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(listener)
             recognizer?.startListening(sttIntent)
+            false
         }
 
 
