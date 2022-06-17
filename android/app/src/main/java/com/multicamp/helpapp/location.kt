@@ -2,25 +2,37 @@ package com.multicamp.helpapp
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import android.widget.Button
+import androidx.core.content.ContextCompat
+import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.text.SimpleDateFormat
 import java.util.*
 
 class location : AppCompatActivity() {
 
-
+    val sub_topic = "android/#"
+    val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
+    var mymqtt : MyMqtt? = null
     val TAG: String = "로그"
+
+    var sttIntent: Intent? = null
+    var recognizer: SpeechRecognizer? = null
+    var ttsObj: TextToSpeech? = null
 
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null // 현재 위치를 가져오기 위한 변수
     lateinit var mLastLocation: Location // 위치 값을 가지고 있는 객체
@@ -35,6 +47,23 @@ class location : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location)
+
+        //Mqtt통신을 수행할 Mqtt객체를 생성
+        mymqtt = MyMqtt(this, server_uri)
+        //블커에서 메시지가 전달되면 호출될 메소드를 넘기기
+        mymqtt?.mysetCallback(::onReceived)
+        //브로커연결
+        mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
+
+        ttsObj = TextToSpeech(this,TextToSpeech.OnInitListener {
+            if(it!=TextToSpeech.ERROR){
+                ttsObj?.language = Locale.KOREAN
+            }
+        })
+
+        sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
 
         // 화면뷰 inflate.
         btnStartupdate = findViewById(R.id.btn_start_upds)
@@ -134,6 +163,21 @@ class location : AppCompatActivity() {
         } else {
             true
         }
+    }
+
+    fun onReceived(topic:String,message: MqttMessage){
+        //토픽의 수신을 처리
+        //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
+        // 모션 detact가 전달되면 Notification도 발생시키기.....
+        val msg = String(message.payload)
+        val utteranceId = this.hashCode().toString() + "0"
+        if(msg == "person") {
+            ttsObj?.speak("전방에 사람이 있습니다", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            Log.d("person","person")
+        }
+
+
     }
 
 }

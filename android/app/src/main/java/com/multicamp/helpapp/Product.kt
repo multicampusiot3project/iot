@@ -12,6 +12,9 @@ import android.os.Bundle
 import android.os.Environment
 
 import android.provider.MediaStore
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.util.Base64
 import android.util.Log
 import android.view.View
@@ -29,6 +32,10 @@ class Product : AppCompatActivity() {
     val sub_topic = "android/#"
     val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
     var mymqtt : MyMqtt? = null
+
+    var sttIntent: Intent? = null
+    var recognizer: SpeechRecognizer? = null
+    var ttsObj: TextToSpeech? = null
 
     // ViewBinding
     // Permisisons
@@ -49,6 +56,16 @@ class Product : AppCompatActivity() {
         mymqtt?.mysetCallback(::onReceived)
         //브로커연결
         mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
+
+        ttsObj = TextToSpeech(this,TextToSpeech.OnInitListener {
+            if(it!=TextToSpeech.ERROR){
+                ttsObj?.language = Locale.KOREAN
+            }
+        })
+
+        sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
+        sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product)
@@ -131,6 +148,7 @@ class Product : AppCompatActivity() {
             Log.d("test",imagedata)
 
             mymqtt?.publish("android/product",imagedata)
+            mymqtt?.publish("android/picture", "start")
             print(imageFile)
             imageFile.close()
         }catch (e: Exception){
@@ -142,6 +160,12 @@ class Product : AppCompatActivity() {
         //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
         // 모션 detact가 전달되면 Notification도 발생시키기.....
         val msg = String(message.payload)
+
+        if(topic == "android/sendmessage") {
+            val utteranceId = this.hashCode().toString() + "0"
+            ttsObj?.speak(msg,TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
     }
 
 
