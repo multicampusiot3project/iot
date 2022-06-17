@@ -99,7 +99,7 @@ class LoginActivity : AppCompatActivity(){
                     results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 for(i in data.indices){
-                    loginID?.text = data.get(i)
+                    loginID?.text =  data.get(i)
                 }
 
                 val utteranceId = this.hashCode().toString() + "0"

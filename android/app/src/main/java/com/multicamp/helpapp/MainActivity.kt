@@ -108,19 +108,34 @@ class MainActivity : AppCompatActivity() {
                     val client= OkHttpClient()
                     val jsondata=jsonobj.toString()
                     val builder= Request.Builder()
+                    val urls="http://13.52.187.248:8000/searchcount"
+                    builder.url(urls)
+                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                    val myrequests: Request =builder.build()
+                    val responses: Response =client.newCall(myrequests).execute()
+                    var count:String?=responses.body()?.string()
+                    count = count?.replace("\""," ")?.trim()
                     val url="http://13.52.187.248:8000/searchProduct"
                     builder.url(url)
                     builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
                     val myrequest: Request =builder.build()
                     val response: Response =client.newCall(myrequest).execute()
                     var result:String?=response.body()?.string()
-                    print(result)
                     result = result?.replace("\""," ")?.trim()
                     result = result?.replace("{", " ")
                     result = result?.replace("}"," ")
-                    var result2 = result?.length.toString()
-                    Log.d("test",result.toString())
-                    ttsObj?.speak(result2 + "개의 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                    result = result?.replace("["," ")
+                    result = result?.replace("]"," ")
+                    result = result?.replace("name", "")
+                    result = result?.replace("["," ")
+                    result = result?.replace("]"," ")
+                    result = result?.split(':').toString()
+                    var resultCount = result?.replace("["," ")
+                    resultCount = resultCount?.replace("]"," ")
+                    resultCount = resultCount?.split(',').toString()
+                    Log.d("test",resultCount)
+
+                    ttsObj?.speak("상품은 $count 개 있습니다. 상품 품목은 $result 이 있습니다",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
                 }
 
             }
@@ -164,10 +179,6 @@ class MainActivity : AppCompatActivity() {
             override fun onResults(results: Bundle?) {
                 var  data:ArrayList<String> =
                         results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
-                count ++
-
-                // 상품리스트를 db에 저장
-                var list:ArrayList<String>
 
                 for(i in data.indices){
                     edittool?.setText(data.get(i))
@@ -178,6 +189,10 @@ class MainActivity : AppCompatActivity() {
                 var voiceNum:String = editNum?.text.toString()
                 val utteranceId = this.hashCode().toString() + ""
                 when (voiceMsg) {
+
+                    // 말한 품목이 한개가 있는지 확인 한개가 있으면 리스트 안에 넣기
+                    // 말한 품목이 여러개 있으면 말한 상품이 너무 많스빈다.
+
 
                     "완료" -> {
                         //음성이 발생되면 처리하고 싶은 기능을 구현
@@ -197,18 +212,105 @@ class MainActivity : AppCompatActivity() {
                         ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $voiceNum 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
                                 utteranceId)
                     }
-                        }
+                }
 
                 Log.d("recog","onResults")
+
+
+                thread{
+                    ttsObj?.stop()
+                    var jsonobj= JSONObject()
+                    jsonobj.put("name",voiceText.text)
+                    val client= OkHttpClient()
+                    val jsondata=jsonobj.toString()
+                    val builder= Request.Builder()
+                    val urls="http://13.52.187.248:8000/searchcount"
+                    builder.url(urls)
+                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                    val myrequests: Request =builder.build()
+                    val responses: Response =client.newCall(myrequests).execute()
+                    var productCounts:String?=responses.body()?.string()
+                    productCounts = productCounts?.replace("\""," ")?.trim()
+                    var productCount : Int?= productCounts.toString().toInt()
+                    Log.d("test", productCounts.toString())
+                    if (productCount != null) {
+                        when {
+                            productCount == 0 -> {
+                                ttsObj?.speak("해당상품이 없습니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                            }
+                            productCount > 1 -> {
+                                ttsObj?.speak("해당 상품이 너무 많습니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                            }
+                            else -> {
+                                // 상품리스트를 db에 저장
+                                count += 1
+                                var list:ArrayList<String>
+
+                                for(i in data.indices){
+                                    edittool?.setText(data.get(i))
+                                }
+                                var textcount = count.toString()
+                                editNum?.setText(textcount)
+                                var voiceMsg:String = edittool?.text.toString()
+                                var jsonobj= JSONObject()
+                                jsonobj.put("name",voiceText.text)
+                                val client= OkHttpClient()
+                                val jsondata=jsonobj.toString()
+                                val builder= Request.Builder()
+                                val urls="http://13.52.187.248:8000/writeList"
+                                builder.url(urls)
+                                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                                val myrequests: Request =builder.build()
+                                val responses: Response =client.newCall(myrequests).execute()
+                                var productCounts:String?=responses.body()?.string()
+                                val utteranceId = this.hashCode().toString() + ""
+                                when (voiceMsg) {
+
+                                    // 말한 품목이 한개가 있는지 확인 한개가 있으면 리스트 안에 넣기
+                                    // 말한 품목이 여러개 있으면 말한 상품이 너무 많스빈다.
+
+
+                                    "완료" -> {
+                                        //음성이 발생되면 처리하고 싶은 기능을 구현
+                                        ttsObj?.speak("쇼핑을 완료하고 메인화면으로 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
+                                                utteranceId)
+                                        ttsObj?.stop()
+                                        startActivity(nextIntent)
+
+                                    }
+                                    "취소" -> {
+                                        //음성이 발생되면 처리하고 싶은 기능을 구현
+
+                                        ttsObj?.speak("취소하고 메인화면을 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
+                                                utteranceId)
+                                        startActivity(nextIntent)
+                                    }
+                                    else -> {
+
+                                        ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $voiceNum 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
+                                                utteranceId)
+                                    }
+                                }
+
+                                Log.d("recog","onResults")
+
+                            }
+                        }
+                    }
+                }
+
+
             }
         })
         btnvoice.setOnClickListener {
+            ttsObj?.stop()
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(clickLister)
             recognizer?.startListening(sttIntent)
         }
 
         btnvoice.setOnLongClickListener {
+            ttsObj?.stop()
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(listener)
             recognizer?.startListening(sttIntent)
