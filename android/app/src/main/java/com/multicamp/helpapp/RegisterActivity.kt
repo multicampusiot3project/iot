@@ -14,15 +14,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_register_tab.*
 import okhttp3.*
-import org.eclipse.paho.client.mqttv3.*
 import org.json.JSONObject
 import java.util.*
 import kotlin.concurrent.thread
 
-class LoginActivity : AppCompatActivity(){
+class RegisterActivity : AppCompatActivity() {
     private var permission_state = false
     var sttIntent: Intent? = null
     var recognizer: SpeechRecognizer? = null
@@ -30,7 +29,7 @@ class LoginActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register_tab)
 
         ttsObj = TextToSpeech(this,TextToSpeech.OnInitListener {
             if(it!=TextToSpeech.ERROR){
@@ -38,31 +37,29 @@ class LoginActivity : AppCompatActivity(){
             }
         })
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
             permission_state = true
         } else {
             permission_state = false
             //2. 권한이 없는 경우 권한을 설정하는 메시지를 띄운다.
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.RECORD_AUDIO),
-                1000
+                    this, arrayOf(Manifest.permission.RECORD_AUDIO),
+                    1000
             )
         }
         sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
         sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
-
-
         val utteranceId = this.hashCode().toString() + "0"
-        loginID.setOnClickListener {
+        id.setOnClickListener {
             ttsObj?.speak("아이디 입력 버튼입니다. 꾹 누르면 음성으로 아이디 입력이 가능합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                utteranceId)
+                    utteranceId)
         }
         var idListener = (object : RecognitionListener {
 
             override fun onReadyForSpeech(params: Bundle?) {
                 ttsObj?.stop()
-                Toast.makeText(applicationContext,"음성인식을 시작합니다.",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"음성인식을 시작합니다.", Toast.LENGTH_LONG).show()
             }
 
             override fun onBeginningOfSpeech() {
@@ -98,7 +95,7 @@ class LoginActivity : AppCompatActivity(){
             }
             override fun onResults(results: Bundle?) {
                 var  data:ArrayList<String> =
-                    results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
+                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 for(i in data.indices){
                     loginID?.text =  data.get(i)
@@ -112,32 +109,19 @@ class LoginActivity : AppCompatActivity(){
             }
         })
 
-        loginID.setOnLongClickListener {
+        id.setOnLongClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(idListener)
             recognizer?.startListening(sttIntent)
             false
         }
 
-        register.setOnClickListener {
-
-            ttsObj?.speak("회원가입 페이지로 이동하는 버튼입니다. 꾹 누르면 회원가입 페이지로 이동합니다", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-        }
-        register.setOnLongClickListener {
-
-            val registerIntent = Intent(this, RegisterActivity::class.java)
-            ttsObj?.speak("회원 가입 페이지으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-            startActivity(registerIntent)
-            false
-        }
 
         var pwListener = (object : RecognitionListener {
 
             override fun onReadyForSpeech(params: Bundle?) {
                 ttsObj?.stop()
-                Toast.makeText(applicationContext,"음성인식을 시작합니다.",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"음성인식을 시작합니다.", Toast.LENGTH_LONG).show()
             }
 
             override fun onBeginningOfSpeech() {
@@ -173,7 +157,7 @@ class LoginActivity : AppCompatActivity(){
             }
             override fun onResults(results: Bundle?) {
                 var  data:ArrayList<String> =
-                    results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
+                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 for(i in data.indices){
                     loginPW?.text = data.get(i)
@@ -183,12 +167,12 @@ class LoginActivity : AppCompatActivity(){
             }
         })
 
-        loginPW.setOnClickListener {
+        grade.setOnClickListener {
             ttsObj?.speak("비밀번호 입력 버튼입니다. 꾹 누르면 음성으로 비밀번호 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
-                utteranceId)
+                    utteranceId)
         }
 
-        loginPW.setOnLongClickListener {
+        grade.setOnLongClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(pwListener)
             recognizer?.startListening(sttIntent)
@@ -196,20 +180,20 @@ class LoginActivity : AppCompatActivity(){
         }
 
 
-        loginSubmit.setOnClickListener {
+        registerSubmit.setOnClickListener {
             thread{
-                var jsonobj=JSONObject()
+                var jsonobj= JSONObject()
                 jsonobj.put("id",loginID.text)
                 jsonobj.put("password",loginPW.text)
-                val client=OkHttpClient()
+                val client= OkHttpClient()
                 val jsondata=jsonobj.toString()
                 val builder= Request.Builder()
                 val url="http://13.52.187.248:8000/loginandroid"
                 val nextIntent= Intent(this,HomeActivity::class.java)
                 builder.url(url)
                 builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-                val myrequest:Request=builder.build()
-                val response:Response=client.newCall(myrequest).execute()
+                val myrequest: Request =builder.build()
+                val response: Response =client.newCall(myrequest).execute()
                 var result:String?=response.body()?.string()
                 print(result)
                 Log.d("test",result+"test result 11111111111111111111111111111111111111")
@@ -231,10 +215,10 @@ class LoginActivity : AppCompatActivity(){
                     startActivity(nextIntent)
                 }else{
                     Log.d("test","else result here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    runOnUiThread {Toast.makeText(this,"로그인 실패!!",Toast.LENGTH_SHORT).show()}
+                    runOnUiThread { Toast.makeText(this,"로그인 실패!!", Toast.LENGTH_SHORT).show()}
                     val utteranceId = this.hashCode().toString() + "0"
                     ttsObj?.speak("로그인 실패했습니다. 아이디와 로그인을 다시한번 확인해주세요", TextToSpeech.QUEUE_FLUSH,null,
-                        utteranceId)
+                            utteranceId)
                 }
                 Log.d("test",result!!+"result here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
@@ -254,4 +238,7 @@ class LoginActivity : AppCompatActivity(){
             recognizer = null
         }
     }
+
+
+
 }
