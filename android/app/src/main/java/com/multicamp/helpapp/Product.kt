@@ -5,11 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 
 import android.provider.MediaStore
 import android.speech.RecognizerIntent
@@ -17,11 +14,10 @@ import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Base64
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import kotlinx.android.synthetic.main.activity_location.*
 import kotlinx.android.synthetic.main.activity_product.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.io.*
@@ -80,6 +76,23 @@ class Product : AppCompatActivity() {
 
 
         }
+
+        val utteranceId = this.hashCode().toString() + "0"
+
+        searchProductBtn.setOnClickListener {
+
+            ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+        searchProductBtn.setOnLongClickListener {
+            
+            val searchIntent = Intent(this, Product::class.java)
+            ttsObj?.speak("상품 검색 화면으로 이동 합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            startActivity(searchIntent)
+            false
+        }
+
 
 
     }
@@ -162,8 +175,9 @@ class Product : AppCompatActivity() {
         val msg = String(message.payload)
 
         if(topic == "android/sendmessage") {
+            Log.d("test",msg)
             val utteranceId = this.hashCode().toString() + "0"
-            ttsObj?.speak(msg,TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("해당 상품 정보는 $msg",TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
     }

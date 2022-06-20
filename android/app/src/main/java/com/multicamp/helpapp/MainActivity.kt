@@ -1,6 +1,7 @@
 package com.multicamp.helpapp
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,7 +15,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONObject
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                     resultCount = resultCount?.split(',').toString()
                     Log.d("test",resultCount)
 
-                    ttsObj?.speak("상품은 $count 개 있습니다. 상품 품목은 $result 이 있습니다",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                    ttsObj?.speak("검색한 $searchText 상품은 $result 이 있습니다",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
                 }
 
             }
@@ -250,9 +250,14 @@ class MainActivity : AppCompatActivity() {
                                     edittool?.setText(data.get(i))
                                 }
                                 var textcount = count.toString()
+                                val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+                                //저장된 데이터 가져오기
+                                var data = "${pref.getString("sessionid","")},"
+                                Log.d("test",data)
                                 editNum?.setText(textcount)
                                 var voiceMsg:String = edittool?.text.toString()
                                 var jsonobj= JSONObject()
+                                jsonobj.put("sessionid",data)
                                 jsonobj.put("name",voiceText.text)
                                 val client= OkHttpClient()
                                 val jsondata=jsonobj.toString()
@@ -287,7 +292,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                     else -> {
 
-                                        ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $voiceNum 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
+                                        ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $textcount 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
                                                 utteranceId)
                                     }
                                 }
