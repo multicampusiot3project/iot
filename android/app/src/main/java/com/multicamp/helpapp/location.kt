@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.activity_location.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.text.SimpleDateFormat
 import java.util.*
@@ -98,6 +99,22 @@ class location : AppCompatActivity() {
             // View Button 활성화 상태 변경
             btnStartupdate.isEnabled = true
             btnStopUpdates.isEnabled = false
+        }
+
+        val utteranceId = this.hashCode().toString() + "0"
+
+        searchProductBtn.setOnClickListener {
+
+            ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+        searchProductBtn.setOnLongClickListener {
+
+            val searchIntent = Intent(this, Product::class.java)
+            ttsObj?.speak("상품 검색 화면으로 이동 합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            startActivity(searchIntent)
+            false
         }
 
     }
