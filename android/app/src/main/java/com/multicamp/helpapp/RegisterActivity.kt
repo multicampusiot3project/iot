@@ -98,7 +98,7 @@ class RegisterActivity : AppCompatActivity() {
                         results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 for(i in data.indices){
-                    loginID?.text =  data.get(i)
+                    id?.text =  data.get(i)
                 }
 
                 val utteranceId = this.hashCode().toString() + "0"
@@ -160,7 +160,131 @@ class RegisterActivity : AppCompatActivity() {
                         results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
 
                 for(i in data.indices){
-                    loginPW?.text = data.get(i)
+                    password?.text = data.get(i)
+                }
+
+                Log.d("recog","onResults")
+            }
+        })
+
+        password.setOnClickListener {
+            ttsObj?.speak("비밀번호 입력 버튼입니다. 꾹 누르면 음성으로 비밀번호 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+
+        password.setOnLongClickListener {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(this)
+            recognizer?.setRecognitionListener(pwListener)
+            recognizer?.startListening(sttIntent)
+            false
+        }
+
+        var nameListener = (object : RecognitionListener {
+
+            override fun onReadyForSpeech(params: Bundle?) {
+                ttsObj?.stop()
+                Toast.makeText(applicationContext,"음성인식을 시작합니다.", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onBeginningOfSpeech() {
+                Log.d("recog","onBeginningOfSpeech")
+            }
+            override fun onRmsChanged(rmsdB: Float) {
+                Log.d("recog","onRmsChanged")
+            }
+            override fun onBufferReceived(buffer: ByteArray?) {
+                Log.d("recog","onBufferReceived")
+            }
+            override fun onPartialResults(partialResults: Bundle?) {
+                Log.d("recog","onPartialResults")
+            }
+            override fun onEvent(eventType: Int, params: Bundle?) {
+                Log.d("recog","onEvent")
+            }
+            override fun onEndOfSpeech() {
+                Log.d("recog","onEndOfSpeech")
+            }
+
+            override fun onError(error: Int) {
+                var message =""
+                when(error){
+                    SpeechRecognizer.ERROR_AUDIO -> message = "오디오 에러"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음";
+                    SpeechRecognizer.ERROR_CLIENT -> message = "클라이언트 에러"
+                    SpeechRecognizer.ERROR_NETWORK ->  message = "네트워크 에러"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> message = "다른 작업 처리 중이라 바쁨"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> message = "말을 너무 길게 해서 시간초과"
+                }
+                Log.d("recog",message)
+            }
+            override fun onResults(results: Bundle?) {
+                var  data:ArrayList<String> =
+                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
+
+                for(i in data.indices){
+                    name?.text = data.get(i)
+                }
+
+                Log.d("recog","onResults")
+            }
+        })
+
+        name.setOnClickListener {
+            ttsObj?.speak("이름 입력 버튼입니다. 꾹 누르면 음성으로 비밀번호 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+
+        name.setOnLongClickListener {
+            recognizer = SpeechRecognizer.createSpeechRecognizer(this)
+            recognizer?.setRecognitionListener(nameListener)
+            recognizer?.startListening(sttIntent)
+            false
+        }
+
+        var gradeListener = (object : RecognitionListener {
+
+            override fun onReadyForSpeech(params: Bundle?) {
+                ttsObj?.stop()
+                Toast.makeText(applicationContext,"음성인식을 시작합니다.", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onBeginningOfSpeech() {
+                Log.d("recog","onBeginningOfSpeech")
+            }
+            override fun onRmsChanged(rmsdB: Float) {
+                Log.d("recog","onRmsChanged")
+            }
+            override fun onBufferReceived(buffer: ByteArray?) {
+                Log.d("recog","onBufferReceived")
+            }
+            override fun onPartialResults(partialResults: Bundle?) {
+                Log.d("recog","onPartialResults")
+            }
+            override fun onEvent(eventType: Int, params: Bundle?) {
+                Log.d("recog","onEvent")
+            }
+            override fun onEndOfSpeech() {
+                Log.d("recog","onEndOfSpeech")
+            }
+
+            override fun onError(error: Int) {
+                var message =""
+                when(error){
+                    SpeechRecognizer.ERROR_AUDIO -> message = "오디오 에러"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음";
+                    SpeechRecognizer.ERROR_CLIENT -> message = "클라이언트 에러"
+                    SpeechRecognizer.ERROR_NETWORK ->  message = "네트워크 에러"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> message = "다른 작업 처리 중이라 바쁨"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> message = "말을 너무 길게 해서 시간초과"
+                }
+                Log.d("recog",message)
+            }
+            override fun onResults(results: Bundle?) {
+                var  data:ArrayList<String> =
+                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
+
+                for(i in data.indices){
+                    grade?.text = data.get(i)
                 }
 
                 Log.d("recog","onResults")
@@ -168,13 +292,13 @@ class RegisterActivity : AppCompatActivity() {
         })
 
         grade.setOnClickListener {
-            ttsObj?.speak("비밀번호 입력 버튼입니다. 꾹 누르면 음성으로 비밀번호 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("시각장애인 등급 입력 버튼입니다. 꾹 누르면 음성으로 시각장애인 등급 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
 
         grade.setOnLongClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
-            recognizer?.setRecognitionListener(pwListener)
+            recognizer?.setRecognitionListener(gradeListener)
             recognizer?.startListening(sttIntent)
             false
         }
@@ -183,12 +307,15 @@ class RegisterActivity : AppCompatActivity() {
         registerSubmit.setOnClickListener {
             thread{
                 var jsonobj= JSONObject()
-                jsonobj.put("id",loginID.text)
-                jsonobj.put("password",loginPW.text)
+                jsonobj.put("id",id.text)
+                jsonobj.put("password",password.text)
+                jsonobj.put("name", name.text)
+                jsonobj.put("gno", grade.text)
                 val client= OkHttpClient()
                 val jsondata=jsonobj.toString()
                 val builder= Request.Builder()
-                val url="http://13.52.187.248:8000/loginandroid"
+                val url="http://13.52.187.248:8000/writeUser"
+                print(url)
                 val nextIntent= Intent(this,HomeActivity::class.java)
                 builder.url(url)
                 builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
@@ -199,19 +326,7 @@ class RegisterActivity : AppCompatActivity() {
                 Log.d("test",result+"test result 11111111111111111111111111111111111111")
                 result = result?.replace("\""," ")?.trim()
                 if(result=="ok"){
-                    //Preference객체를 추출한다.
-                    //Context.MODE_PRIVATE는 기존 데이터 유지하지않고 싹 지우는 거고
-                    //Context.MODE_APPEND는 기존 데이터 위에 추가하는 것이다.
-                    val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
-
-                    //데이터 저장을 위한 객체를 추출
-                    val saveObj = mySetting.edit()
-                    saveObj.putString("sessionid",loginID.text.toString())
-                    saveObj.commit()
-                    val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
-                    var data = "${pref.getString("sessionid","")}"
                     Log.d("test",result!!+"ok result here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    Log.d("test",data)
                     startActivity(nextIntent)
                 }else{
                     Log.d("test","else result here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

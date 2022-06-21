@@ -77,21 +77,7 @@ class Product : AppCompatActivity() {
 
         }
 
-        val utteranceId = this.hashCode().toString() + "0"
 
-        searchProductBtn.setOnClickListener {
-
-            ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-        }
-        searchProductBtn.setOnLongClickListener {
-            
-            val searchIntent = Intent(this, Product::class.java)
-            ttsObj?.speak("상품 검색 화면으로 이동 합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-            startActivity(searchIntent)
-            false
-        }
 
 
 
