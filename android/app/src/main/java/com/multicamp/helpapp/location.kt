@@ -196,12 +196,6 @@ class location : AppCompatActivity() {
                     utteranceId)
             Log.d("person","person")
         }
-        else if(topic == "android/sendmessage") {
-            Log.d("test",msg)
-            val utteranceId = this.hashCode().toString() + "0"
-            ttsObj?.speak("해당 상품 정보는 $massage2",TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-        }
 
 
     }

@@ -18,12 +18,16 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_location.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_product.*
+import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.json.JSONObject
 import java.io.*
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class Product : AppCompatActivity() {
     val sub_topic = "android/#"
@@ -145,7 +149,7 @@ class Product : AppCompatActivity() {
             mymqtt?.publish("android/picture", "start")
             print(imageFile)
             imageFile.close()
-        }catch (e: Exception){
+        } catch (e: Exception){
             null
         }}
 
@@ -166,12 +170,79 @@ class Product : AppCompatActivity() {
                     utteranceId)
         }
 
-        if(topic == "android/productResult") {
+        if(topic == "android/pictureResult") {
             val massage = String(message.payload, Charset.forName("UTF-8"))
             Log.d("test",msg)
             val utteranceId = this.hashCode().toString() + "0"
-            ttsObj?.speak("고유번호는 $massage",TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
+            thread {
+                var jsonobj= JSONObject()
+                jsonobj.put("id","$massage")
+                val client= OkHttpClient()
+                val jsondata=jsonobj.toString()
+                val builder= Request.Builder()
+                val urls="http://13.52.187.248:8000/pictureName"
+                builder.url(urls)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val myrequests: Request =builder.build()
+                val responses: Response =client.newCall(myrequests).execute()
+//                    val urls="http://13.52.187.248:8000/searchcount"
+//                    builder.url(urls)
+//                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+//                    val myrequests: Request =builder.build()
+//                    val responses: Response =client.newCall(myrequests).execute()
+//                    var count:String?=responses.body()?.string()
+//                    count = count?.replace("\""," ")?.trim()
+                val url="http://13.52.187.248:8000/pictureName"
+                builder.url(url)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val myrequest: Request =builder.build()
+                val response: Response =client.newCall(myrequest).execute()
+                var result:String?=response.body()?.string()
+                result = result?.replace("\""," ")?.trim()
+                result = result?.replace("{", " ")
+                result = result?.replace("}"," ")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace("name", "")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.split(':').toString()
+                val priceUrl="http://13.52.187.248:8000/picturePrice"
+                builder.url(priceUrl)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val priceMyRequest: Request =builder.build()
+                val priceResponse: Response =client.newCall(priceMyRequest).execute()
+                var priceResult:String?=priceResponse.body()?.string()
+                priceResult = priceResult?.replace("\"","")?.trim()
+                priceResult = priceResult?.replace("{", "")
+                priceResult = priceResult?.replace("}","")
+                priceResult = priceResult?.replace("[","")
+                priceResult = priceResult?.replace("]","")
+                priceResult = priceResult?.replace("price", "")
+                priceResult = priceResult?.replace("[","")
+                priceResult = priceResult?.replace("]","")
+                priceResult = priceResult?.replace(",","")
+
+                val manufactureUrl="http://13.52.187.248:8000/pictureManufacture"
+                builder.url(manufactureUrl)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val manufactureRequest: Request =builder.build()
+                val manufactureResponse: Response =client.newCall(manufactureRequest).execute()
+                var manufactureResult:String?=manufactureResponse.body()?.string()
+                manufactureResult = manufactureResult?.replace("\""," ")?.trim()
+                manufactureResult = manufactureResult?.replace("{", " ")
+                manufactureResult = manufactureResult?.replace("}"," ")
+                manufactureResult = manufactureResult?.replace("["," ")
+                manufactureResult = manufactureResult?.replace("]"," ")
+                manufactureResult = manufactureResult?.replace("manufacture", "")
+                manufactureResult = manufactureResult?.replace("["," ")
+                manufactureResult = manufactureResult?.replace("]"," ")
+                manufactureResult = manufactureResult?.split(':').toString()
+
+                ttsObj?.speak("사진 찍은 제품은 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+
+            }
+
         }
     }
 
