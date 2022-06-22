@@ -127,9 +127,13 @@ class Product : AppCompatActivity() {
         //저장된 데이터 가져오기
         var data = "${pref.getString("main","")},"
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
-        val filename = data + imgCount.toString()
+        data = data.replace(",","")
+        var filename = data
+        if(filename == "과자") {
+            filename = "snack"
+        }
         Log.d("filename",filename)
-        return "${filename}.jpg"
+        return "${sdf}.jpg"
     }
     private fun saveBitmapAsJPGFile(bitmap: Bitmap) {
         val path = File(filesDir, "image")

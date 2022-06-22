@@ -74,12 +74,18 @@ class location : AppCompatActivity() {
             result = result?.replace("["," ")
             result = result?.replace("]"," ")
             result = result?.replace(" ","")
+            result = result?.replace(":","")
+
             Log.d("testes", result.toString())
+            productMainName.text = result.toString()
             val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
 
             //데이터 저장을 위한 객체를 추출
             val saveObj = mySetting.edit()
             saveObj.putString("main",result)
+            saveObj.commit()
+            var results = result.toString()
+            mymqtt?.publish("android/imgName",results.toString())
 
             ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
@@ -155,6 +161,7 @@ class location : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
+            count += 1
             ttsObj?.speak("다음 리스트로 이동하는 버튼입니다. 꾹 누르면 다음를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             thread {
