@@ -14,16 +14,17 @@ import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import android.widget.Button
-import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_location.*
+import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.json.JSONObject
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class location : AppCompatActivity() {
 
@@ -35,7 +36,9 @@ class location : AppCompatActivity() {
     var sttIntent: Intent? = null
     var recognizer: SpeechRecognizer? = null
     var ttsObj: TextToSpeech? = null
-
+    var count = 1
+    var imgCount = 0
+    val utteranceId = this.hashCode().toString() + "0"
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null // 현재 위치를 가져오기 위한 변수
     lateinit var mLastLocation: Location // 위치 값을 가지고 있는 객체
     internal lateinit var mLocationRequest: LocationRequest // 위치 정보 요청의 매개변수를 저장하는
@@ -49,6 +52,38 @@ class location : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location)
+
+        thread {
+            var jsonobj= JSONObject()
+            jsonobj.put("lno",count)
+            val client= OkHttpClient()
+            val jsondata=jsonobj.toString()
+            val builder= Request.Builder()
+            val url="http://13.52.187.248:8000/guardList"
+            builder.url(url)
+            builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+            val myrequest: Request =builder.build()
+            val response: Response =client.newCall(myrequest).execute()
+            var result:String?=response.body()?.string()
+            result = result?.replace("\""," ")?.trim()
+            result = result?.replace("{", " ")
+            result = result?.replace("}"," ")
+            result = result?.replace("["," ")
+            result = result?.replace("]"," ")
+            result = result?.replace("main", "")
+            result = result?.replace("["," ")
+            result = result?.replace("]"," ")
+            result = result?.replace(" ","")
+            Log.d("testes", result.toString())
+            val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+
+            //데이터 저장을 위한 객체를 추출
+            val saveObj = mySetting.edit()
+            saveObj.putString("main",result)
+
+            ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
 
         //Mqtt통신을 수행할 Mqtt객체를 생성
         mymqtt = MyMqtt(this, server_uri)
@@ -66,6 +101,8 @@ class location : AppCompatActivity() {
         sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         sttIntent?.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName)
         sttIntent?.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR")
+
+
 
         // 화면뷰 inflate.
         btnStartupdate = findViewById(R.id.btn_start_upds)
@@ -102,17 +139,103 @@ class location : AppCompatActivity() {
             btnStopUpdates.isEnabled = false
         }
 
-        val utteranceId = this.hashCode().toString() + "0"
-
         searchProductBtn.setOnClickListener {
 
             ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
+
         searchProductBtn.setOnLongClickListener {
 
             val searchIntent = Intent(this, Product::class.java)
             ttsObj?.speak("상품 검색 화면으로 이동 합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            startActivity(searchIntent)
+            false
+        }
+
+        nextButton.setOnClickListener {
+            ttsObj?.speak("다음 리스트로 이동하는 버튼입니다. 꾹 누르면 다음를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            thread {
+                var jsonobj= JSONObject()
+                jsonobj.put("lno",count)
+                val client= OkHttpClient()
+                val jsondata=jsonobj.toString()
+                val builder= Request.Builder()
+                val url="http://13.52.187.248:8000/guardList"
+                builder.url(url)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val myrequest: Request =builder.build()
+                val response: Response =client.newCall(myrequest).execute()
+                var result:String?=response.body()?.string()
+                result = result?.replace("\""," ")?.trim()
+                result = result?.replace("{", " ")
+                result = result?.replace("}"," ")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace("main", "")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace(" ","")
+                Log.d("testes", result.toString())
+                val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+
+                //데이터 저장을 위한 객체를 추출
+                val saveObj = mySetting.edit()
+                saveObj.putString("main",result)
+
+                ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+            }
+        }
+
+        nextButton.setOnLongClickListener {
+            ttsObj?.speak("다음 안내를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            thread {
+                var jsonobj= JSONObject()
+                jsonobj.put("lno",count)
+                val client= OkHttpClient()
+                val jsondata=jsonobj.toString()
+                val builder= Request.Builder()
+                val url="http://13.52.187.248:8000/guardList"
+                builder.url(url)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val myrequest: Request =builder.build()
+                val response: Response =client.newCall(myrequest).execute()
+                var result:String?=response.body()?.string()
+                result = result?.replace("\""," ")?.trim()
+                result = result?.replace("{", " ")
+                result = result?.replace("}"," ")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace("main", "")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace(" ","")
+                Log.d("testes", result.toString())
+                val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+
+                //데이터 저장을 위한 객체를 추출
+                val saveObj = mySetting.edit()
+                saveObj.putString("main",result.toString())
+
+                ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+            }
+
+            false
+        }
+
+        complete.setOnClickListener {
+            ttsObj?.speak("완료 버튼입니다. 꾹 누르면 메인 화면으로 이동하고 메인페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+
+        nextButton.setOnLongClickListener {
+            val searchIntent = Intent(this, MainActivity::class.java)
+            ttsObj?.speak("메인 페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             startActivity(searchIntent)
             false
