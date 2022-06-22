@@ -241,81 +241,16 @@ class RegisterActivity : AppCompatActivity() {
             false
         }
 
-        var gradeListener = (object : RecognitionListener {
-
-            override fun onReadyForSpeech(params: Bundle?) {
-                ttsObj?.stop()
-                Toast.makeText(applicationContext,"음성인식을 시작합니다.", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onBeginningOfSpeech() {
-                Log.d("recog","onBeginningOfSpeech")
-            }
-            override fun onRmsChanged(rmsdB: Float) {
-                Log.d("recog","onRmsChanged")
-            }
-            override fun onBufferReceived(buffer: ByteArray?) {
-                Log.d("recog","onBufferReceived")
-            }
-            override fun onPartialResults(partialResults: Bundle?) {
-                Log.d("recog","onPartialResults")
-            }
-            override fun onEvent(eventType: Int, params: Bundle?) {
-                Log.d("recog","onEvent")
-            }
-            override fun onEndOfSpeech() {
-                Log.d("recog","onEndOfSpeech")
-            }
-
-            override fun onError(error: Int) {
-                var message =""
-                when(error){
-                    SpeechRecognizer.ERROR_AUDIO -> message = "오디오 에러"
-                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음";
-                    SpeechRecognizer.ERROR_CLIENT -> message = "클라이언트 에러"
-                    SpeechRecognizer.ERROR_NETWORK ->  message = "네트워크 에러"
-                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> message = "다른 작업 처리 중이라 바쁨"
-                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> message = "말을 너무 길게 해서 시간초과"
-                }
-                Log.d("recog",message)
-            }
-            override fun onResults(results: Bundle?) {
-                var  data:ArrayList<String> =
-                        results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) as ArrayList<String>
-
-                for(i in data.indices){
-                    grade?.text = data.get(i)
-                }
-
-                Log.d("recog","onResults")
-            }
-        })
-
-        grade.setOnClickListener {
-            ttsObj?.speak("시각장애인 등급 입력 버튼입니다. 꾹 누르면 음성으로 시각장애인 등급 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-        }
-
-        grade.setOnLongClickListener {
-            recognizer = SpeechRecognizer.createSpeechRecognizer(this)
-            recognizer?.setRecognitionListener(gradeListener)
-            recognizer?.startListening(sttIntent)
-            false
-        }
-
-
         registerSubmit.setOnClickListener {
             thread{
                 var jsonobj= JSONObject()
                 jsonobj.put("id",id.text)
                 jsonobj.put("password",password.text)
                 jsonobj.put("name", name.text)
-                jsonobj.put("gno", grade.text)
                 val client= OkHttpClient()
                 val jsondata=jsonobj.toString()
                 val builder= Request.Builder()
                 val url="http://13.52.187.248:8000/writeUser"
-                print(url)
                 val nextIntent= Intent(this,HomeActivity::class.java)
                 builder.url(url)
                 builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
@@ -332,7 +267,7 @@ class RegisterActivity : AppCompatActivity() {
                     Log.d("test","else result here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     runOnUiThread { Toast.makeText(this,"로그인 실패!!", Toast.LENGTH_SHORT).show()}
                     val utteranceId = this.hashCode().toString() + "0"
-                    ttsObj?.speak("로그인 실패했습니다. 아이디와 로그인을 다시한번 확인해주세요", TextToSpeech.QUEUE_FLUSH,null,
+                    ttsObj?.speak("회원가입 실패했습니다. 다시한번 회원가입을 해주세요.", TextToSpeech.QUEUE_FLUSH,null,
                             utteranceId)
                 }
                 Log.d("test",result!!+"result here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

@@ -105,16 +105,17 @@ class MainActivity : AppCompatActivity() {
                     val utteranceId = this.hashCode().toString() + ""
                     var jsonobj= JSONObject()
                     jsonobj.put("name",searchText.text)
+                    var search = searchText.text.toString()
                     val client= OkHttpClient()
                     val jsondata=jsonobj.toString()
                     val builder= Request.Builder()
-                    val urls="http://13.52.187.248:8000/searchcount"
-                    builder.url(urls)
-                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-                    val myrequests: Request =builder.build()
-                    val responses: Response =client.newCall(myrequests).execute()
-                    var count:String?=responses.body()?.string()
-                    count = count?.replace("\""," ")?.trim()
+//                    val urls="http://13.52.187.248:8000/searchcount"
+//                    builder.url(urls)
+//                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+//                    val myrequests: Request =builder.build()
+//                    val responses: Response =client.newCall(myrequests).execute()
+//                    var count:String?=responses.body()?.string()
+//                    count = count?.replace("\""," ")?.trim()
                     val url="http://13.52.187.248:8000/searchProduct"
                     builder.url(url)
                     builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
@@ -130,12 +131,39 @@ class MainActivity : AppCompatActivity() {
                     result = result?.replace("["," ")
                     result = result?.replace("]"," ")
                     result = result?.split(':').toString()
-                    var resultCount = result?.replace("["," ")
-                    resultCount = resultCount?.replace("]"," ")
-                    resultCount = resultCount?.split(',').toString()
-                    Log.d("test",resultCount)
+                    val priceUrl="http://13.52.187.248:8000/searchprice"
+                    builder.url(priceUrl)
+                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                    val priceMyRequest: Request =builder.build()
+                    val priceResponse: Response =client.newCall(priceMyRequest).execute()
+                    var priceResult:String?=priceResponse.body()?.string()
+                    priceResult = priceResult?.replace("\"","")?.trim()
+                    priceResult = priceResult?.replace("{", "")
+                    priceResult = priceResult?.replace("}","")
+                    priceResult = priceResult?.replace("[","")
+                    priceResult = priceResult?.replace("]","")
+                    priceResult = priceResult?.replace("price", "")
+                    priceResult = priceResult?.replace("[","")
+                    priceResult = priceResult?.replace("]","")
+                    priceResult = priceResult?.replace(",","")
 
-                    ttsObj?.speak("검색한 $searchText 상품은 $result 이 있습니다",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                    val manufactureUrl="http://13.52.187.248:8000/searchManufacture"
+                    builder.url(manufactureUrl)
+                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                    val manufactureRequest: Request =builder.build()
+                    val manufactureResponse: Response =client.newCall(manufactureRequest).execute()
+                    var manufactureResult:String?=manufactureResponse.body()?.string()
+                    manufactureResult = manufactureResult?.replace("\""," ")?.trim()
+                    manufactureResult = manufactureResult?.replace("{", " ")
+                    manufactureResult = manufactureResult?.replace("}"," ")
+                    manufactureResult = manufactureResult?.replace("["," ")
+                    manufactureResult = manufactureResult?.replace("]"," ")
+                    manufactureResult = manufactureResult?.replace("manufacture", "")
+                    manufactureResult = manufactureResult?.replace("["," ")
+                    manufactureResult = manufactureResult?.replace("]"," ")
+                    manufactureResult = manufactureResult?.split(':').toString()
+
+                    ttsObj?.speak("검색한 $search 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
                 }
 
             }
@@ -250,31 +278,10 @@ class MainActivity : AppCompatActivity() {
                                     edittool?.setText(data.get(i))
                                 }
                                 var textcount = count.toString()
-                                val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
-                                //저장된 데이터 가져오기
-                                var data = "${pref.getString("sessionid","")},"
-                                Log.d("test",data)
-                                editNum?.setText(textcount)
-                                var voiceMsg:String = edittool?.text.toString()
-                                var jsonobj= JSONObject()
-                                jsonobj.put("sessionid",data)
-                                jsonobj.put("name",voiceText.text)
-                                val client= OkHttpClient()
-                                val jsondata=jsonobj.toString()
-                                val builder= Request.Builder()
-                                val urls="http://13.52.187.248:8000/writeList"
-                                builder.url(urls)
-                                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-                                val myrequests: Request =builder.build()
-                                val responses: Response =client.newCall(myrequests).execute()
-                                var productCounts:String?=responses.body()?.string()
-                                val utteranceId = this.hashCode().toString() + ""
                                 when (voiceMsg) {
 
                                     // 말한 품목이 한개가 있는지 확인 한개가 있으면 리스트 안에 넣기
                                     // 말한 품목이 여러개 있으면 말한 상품이 너무 많스빈다.
-
-
                                     "완료" -> {
                                         //음성이 발생되면 처리하고 싶은 기능을 구현
                                         ttsObj?.speak("쇼핑을 완료하고 메인화면으로 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
@@ -291,6 +298,26 @@ class MainActivity : AppCompatActivity() {
                                         startActivity(nextIntent)
                                     }
                                     else -> {
+
+                                        val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+                                        //저장된 데이터 가져오기
+                                        var data = "${pref.getString("sessionid","")},"
+                                        Log.d("test",data)
+                                        editNum?.setText(textcount)
+                                        var voiceMsg:String = edittool?.text.toString()
+                                        var jsonobj= JSONObject()
+                                        jsonobj.put("sessionid",data)
+                                        jsonobj.put("name",voiceText.text)
+                                        val client= OkHttpClient()
+                                        val jsondata=jsonobj.toString()
+                                        val builder= Request.Builder()
+                                        val urls="http://13.52.187.248:8000/writeList"
+                                        builder.url(urls)
+                                        builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                                        val myrequests: Request =builder.build()
+                                        val responses: Response =client.newCall(myrequests).execute()
+                                        var productCounts:String?=responses.body()?.string()
+                                        val utteranceId = this.hashCode().toString() + ""
 
                                         ttsObj?.speak("장바구니에 $voiceMsg 를 담았습니다. 현재 장바구니에는 $textcount 개 상품이 있습니다.",TextToSpeech.QUEUE_FLUSH,null,
                                                 utteranceId)

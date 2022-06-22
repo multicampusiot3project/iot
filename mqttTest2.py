@@ -1,8 +1,12 @@
-from cgi import test
-import threading
-import paho.mqtt.client as mqtt
-import io
+import base64
+import paho.mqtt.publish as publisher
 from threading import Thread, Event
+import datetime
+import time
+
+now = datetime.datetime.now()
+
+
 
 count = 0
 
@@ -37,6 +41,7 @@ class MqttWorker:
             self.client.connect("13.52.187.248", 1883, 60)
             mythreadobj = Thread(target=self.client.loop_forever)
             mythreadobj.start()
+            publisher.single("android/picture", "product1", hostname="13.52.187.248")
         except KeyboardInterrupt:
             pass
         finally:
@@ -48,6 +53,9 @@ class MqttWorker:
             client.subscribe("iot/#")
             client.subscribe("web")
             client.subscribe("mydata/file")
+            client.subscribe("android/product")
+            client.subscribe("android/productAI")
+
         else:
             print("연결실패.....")
 
@@ -55,22 +63,26 @@ class MqttWorker:
     def on_message(self, client, userdata, message):
         try:
             print("test~~~~~")
-            myval = message.payload.decode("utf-8")
-            print(message.topic+"-----"+myval)
-            myval2 = myval.split("/")
+            print(message.topic+"-----")
+            myval2 = message.topic.split("/")
+            print(myval2[1])
+            global count
             if myval2[1] == "file":
-                global count
-                try:
-                    count += 1
-                    f = open("output%s.jpg" % str(count), "wb")
-                    f.write(message.payload)
-                    print("메시지 수신 완료 - 파일저장하기 완료")
-                    f.close()
-                except Exception as e:
-                    print("에러발생:", e)
-                finally:
-                    pass
-
+                count += 1
+                f = open("/home/ec2-user/image/result/test{}.jpg".format(str(count)), "wb")
+                f.write(message.payload)
+                print("메시지 수신 완료 - 파일저장하기 완료")
+                f.close()
+                publisher.single("iot/picamera","okay", hostname="13.52.187.248")
+            if myval2[1] == "product":
+                count += 1
+                print("안드로이드 수신완료")
+                f = open("/home/ec2-user/image/product_image/{}product{}.jpg".format(now, count), "wb")
+                data = base64.b64decode(message.payload)
+                f.write(data)
+                print("이미지 저장 완료")
+                f.close()
+                publisher.single("android/picture", "/image/product_image/{}product{}.jpg".format(now,count), hostname="13.52.187.248")
 
 
         except:
