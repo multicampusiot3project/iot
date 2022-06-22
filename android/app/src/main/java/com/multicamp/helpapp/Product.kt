@@ -2,6 +2,7 @@ package com.multicamp.helpapp
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -33,7 +34,7 @@ class Product : AppCompatActivity() {
     val sub_topic = "android/#"
     val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
     var mymqtt : MyMqtt? = null
-
+    var imgCount = 0
     var sttIntent: Intent? = null
     var recognizer: SpeechRecognizer? = null
     var ttsObj: TextToSpeech? = null
@@ -121,8 +122,13 @@ class Product : AppCompatActivity() {
     }
 
     private fun newJpgFileName() : String {
+        imgCount += 1
+        val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+        //저장된 데이터 가져오기
+        var data = "${pref.getString("main","")},"
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
-        val filename = sdf.format(System.currentTimeMillis())
+        val filename = data + imgCount.toString()
+        Log.d("filename",filename)
         return "${filename}.jpg"
     }
     private fun saveBitmapAsJPGFile(bitmap: Bitmap) {
