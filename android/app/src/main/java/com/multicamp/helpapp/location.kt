@@ -21,6 +21,7 @@ import android.widget.Button
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_location.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -187,11 +188,19 @@ class location : AppCompatActivity() {
         //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
         // 모션 detact가 전달되면 Notification도 발생시키기.....
         val msg = String(message.payload)
+        val massage = String(message.payload, Charset.forName("UTF-8"))
+        val massage2 = String(message.payload, Charset.forName("EUC-kR"))
         val utteranceId = this.hashCode().toString() + "0"
         if(msg == "person") {
             ttsObj?.speak("전방에 사람이 있습니다", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             Log.d("person","person")
+        }
+        else if(topic == "android/sendmessage") {
+            Log.d("test",msg)
+            val utteranceId = this.hashCode().toString() + "0"
+            ttsObj?.speak("해당 상품 정보는 $massage2",TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
         }
 
 

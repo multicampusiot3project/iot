@@ -76,18 +76,6 @@
             android:hint="이름"
             />
         <Button
-            android:id="@+id/grade"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/input_box1"
-            android:padding="10dp"
-            android:textColor="#222222"
-            android:textColorHint="#999999"
-            android:inputType="textPassword"
-            android:hint="시각장애 등급"
-            />
-        <Button
             android:id="@+id/registerSubmit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
