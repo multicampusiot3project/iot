@@ -61,6 +61,15 @@
         android:text="업데이트 시간"
         android:id="@+id/txtTime" />
 
+    <TextView
+        android:id="@+id/productMainName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="매대"
+        android:textSize="12dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large">
+    </TextView>
+
     <Button
         android:id="@+id/searchProductBtn"
         android:layout_width="match_parent"
