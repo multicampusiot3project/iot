@@ -231,13 +231,73 @@ open class location : AppCompatActivity() {
             false
         }
 
+        beforeButton.setOnClickListener {
+            ttsObj?.speak("이전 리스트로 이동하는 버튼입니다. 꾹 누르면 다음를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+        }
+
+        beforeButton.setOnLongClickListener {
+            count -= 1
+            ttsObj?.speak("이전 안내를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
+                    utteranceId)
+            thread {
+                var jsonobj= JSONObject()
+                jsonobj.put("lno",count)
+                val client= OkHttpClient()
+                val jsondata=jsonobj.toString()
+                val builder= Request.Builder()
+                val url="http://13.52.187.248:8000/guardList"
+                builder.url(url)
+                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+                val myrequest: Request =builder.build()
+                val response: Response =client.newCall(myrequest).execute()
+                var result:String?=response.body()?.string()
+                result = result?.replace("\""," ")?.trim()
+                result = result?.replace("{", " ")
+                result = result?.replace("}"," ")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace("main", "")
+                result = result?.replace("["," ")
+                result = result?.replace("]"," ")
+                result = result?.replace(" ","")
+                Log.d("testes", result.toString())
+                productMainName.text = result.toString()
+                var resultEnglish = result.toString()
+                when (resultEnglish) {
+                    "디저트" -> {
+                        resultEnglish = "dessert"
+                    }
+                    "홈클린" -> {
+                        resultEnglish = "clean"
+                    }
+                    "의약외품" -> {
+                        resultEnglish = "drug"
+                    }
+                    "상온HMR" -> {
+                        resultEnglish = "hmr"
+                    }
+                }
+
+                Log.d("tested", resultEnglish)
+
+                mymqtt?.publish("android/imgName",resultEnglish)
+
+                ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+
+            }
+
+            false
+        }
+
         complete.setOnClickListener {
             ttsObj?.speak("완료 버튼입니다. 꾹 누르면 메인 화면으로 이동하고 메인페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
 
         complete.setOnLongClickListener {
-            val searchIntent = Intent(this, MainActivity::class.java)
+            val searchIntent = Intent(this, HomeActivity::class.java)
             ttsObj?.speak("메인 페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             startActivity(searchIntent)
