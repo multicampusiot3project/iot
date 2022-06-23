@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity() {
                     priceResult = priceResult?.replace("[","")
                     priceResult = priceResult?.replace("]","")
                     priceResult = priceResult?.replace(",","")
+                    priceResult = priceResult?.replace(".",",")
 
                     val manufactureUrl="http://13.52.187.248:8000/searchManufacture"
                     builder.url(manufactureUrl)
@@ -163,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                     manufactureResult = manufactureResult?.replace("]"," ")
                     manufactureResult = manufactureResult?.split(':').toString()
 
-                    ttsObj?.speak("검색한 $search 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+                    ttsObj?.speak("검색한 $search 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 원 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
                 }
 
             }
@@ -281,22 +282,7 @@ class MainActivity : AppCompatActivity() {
                                 when (voiceMsg) {
 
                                     // 말한 품목이 한개가 있는지 확인 한개가 있으면 리스트 안에 넣기
-                                    // 말한 품목이 여러개 있으면 말한 상품이 너무 많스빈다.
-                                    "완료" -> {
-                                        //음성이 발생되면 처리하고 싶은 기능을 구현
-                                        ttsObj?.speak("쇼핑을 완료하고 메인화면으로 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
-                                                utteranceId)
-                                        ttsObj?.stop()
-                                        startActivity(nextIntent)
-
-                                    }
-                                    "취소" -> {
-                                        //음성이 발생되면 처리하고 싶은 기능을 구현
-
-                                        ttsObj?.speak("취소하고 메인화면을 이동합니다..",TextToSpeech.QUEUE_FLUSH,null,
-                                                utteranceId)
-                                        startActivity(nextIntent)
-                                    }
+                                    // 말한 품목이 여러개 있으면 말한 상품이 너무 a많습니다.
                                     else -> {
 
                                         val pref = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
