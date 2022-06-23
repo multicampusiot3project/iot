@@ -14,19 +14,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.*
-import org.eclipse.paho.client.mqttv3.*
 import org.json.JSONObject
 import java.util.*
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity(){
     private var permission_state = false
-    var sttIntent: Intent? = null
-    var recognizer: SpeechRecognizer? = null
-    var ttsObj: TextToSpeech? = null
+    private var sttIntent: Intent? = null
+    private var recognizer: SpeechRecognizer? = null
+    private var ttsObj: TextToSpeech? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +56,7 @@ class LoginActivity : AppCompatActivity(){
             ttsObj?.speak("아이디 입력 버튼입니다. 꾹 누르면 음성으로 아이디 입력이 가능합니다.", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
         }
-        var idListener = (object : RecognitionListener {
+        val idListener = (object : RecognitionListener {
 
             override fun onReadyForSpeech(params: Bundle?) {
                 ttsObj?.stop()
@@ -104,9 +102,6 @@ class LoginActivity : AppCompatActivity(){
                     loginID?.text =  data.get(i)
                 }
 
-                val utteranceId = this.hashCode().toString() + "0"
-
-
                 Log.d("recog","onResults")
 
             }
@@ -133,7 +128,7 @@ class LoginActivity : AppCompatActivity(){
             false
         }
 
-        var pwListener = (object : RecognitionListener {
+        val pwListener = (object : RecognitionListener {
 
             override fun onReadyForSpeech(params: Bundle?) {
                 ttsObj?.stop()
@@ -163,7 +158,7 @@ class LoginActivity : AppCompatActivity(){
                 var message =""
                 when(error){
                     SpeechRecognizer.ERROR_AUDIO -> message = "오디오 에러"
-                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음";
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> message = "퍼미션이 설정되지 않음"
                     SpeechRecognizer.ERROR_CLIENT -> message = "클라이언트 에러"
                     SpeechRecognizer.ERROR_NETWORK ->  message = "네트워크 에러"
                     SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> message = "다른 작업 처리 중이라 바쁨"
@@ -198,7 +193,7 @@ class LoginActivity : AppCompatActivity(){
 
         loginSubmit.setOnClickListener {
             thread{
-                var jsonobj=JSONObject()
+                val jsonobj=JSONObject()
                 jsonobj.put("id",loginID.text)
                 jsonobj.put("password",loginPW.text)
                 val client=OkHttpClient()

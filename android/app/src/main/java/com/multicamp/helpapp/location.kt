@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.TextView
@@ -26,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
-class location : AppCompatActivity() {
+open class location : AppCompatActivity() {
 
     val sub_topic = "android/#"
     val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
@@ -34,10 +33,8 @@ class location : AppCompatActivity() {
     val TAG: String = "로그"
 
     var sttIntent: Intent? = null
-    var recognizer: SpeechRecognizer? = null
     var ttsObj: TextToSpeech? = null
     var count = 1
-    var imgCount = 0
     val utteranceId = this.hashCode().toString() + "0"
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null // 현재 위치를 가져오기 위한 변수
     lateinit var mLastLocation: Location // 위치 값을 가지고 있는 객체
@@ -84,8 +81,24 @@ class location : AppCompatActivity() {
             val saveObj = mySetting.edit()
             saveObj.putString("main",result)
             saveObj.commit()
-            var results = result.toString()
-            mymqtt?.publish("android/imgName",results.toString())
+            var resultEnglish = result.toString()
+            when (resultEnglish) {
+                "디저트" -> {
+                    resultEnglish = "dessert"
+                }
+                "홈클린" -> {
+                    resultEnglish = "clean"
+                }
+                "의약외품" -> {
+                    resultEnglish = "drug"
+                }
+                "상온HMR" -> {
+                    resultEnglish = "hmr"
+                }
+            }
+            Log.d("tested", resultEnglish)
+
+            mymqtt?.publish("android/imgName",resultEnglish)
 
             ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
@@ -96,7 +109,7 @@ class location : AppCompatActivity() {
         //블커에서 메시지가 전달되면 호출될 메소드를 넘기기
         mymqtt?.mysetCallback(::onReceived)
         //브로커연결
-        mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
+        mymqtt?.connect(arrayOf(sub_topic)) //여기에 토픽 추가
 
         ttsObj = TextToSpeech(this,TextToSpeech.OnInitListener {
             if(it!=TextToSpeech.ERROR){
@@ -161,43 +174,12 @@ class location : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-            count += 1
             ttsObj?.speak("다음 리스트로 이동하는 버튼입니다. 꾹 누르면 다음를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
-            thread {
-                var jsonobj= JSONObject()
-                jsonobj.put("lno",count)
-                val client= OkHttpClient()
-                val jsondata=jsonobj.toString()
-                val builder= Request.Builder()
-                val url="http://13.52.187.248:8000/guardList"
-                builder.url(url)
-                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-                val myrequest: Request =builder.build()
-                val response: Response =client.newCall(myrequest).execute()
-                var result:String?=response.body()?.string()
-                result = result?.replace("\""," ")?.trim()
-                result = result?.replace("{", " ")
-                result = result?.replace("}"," ")
-                result = result?.replace("["," ")
-                result = result?.replace("]"," ")
-                result = result?.replace("main", "")
-                result = result?.replace("["," ")
-                result = result?.replace("]"," ")
-                result = result?.replace(" ","")
-                Log.d("testes", result.toString())
-                val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
-
-                //데이터 저장을 위한 객체를 추출
-                val saveObj = mySetting.edit()
-                saveObj.putString("main",result)
-
-                ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
-                        utteranceId)
-            }
         }
 
         nextButton.setOnLongClickListener {
+            count += 1
             ttsObj?.speak("다음 안내를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             thread {
@@ -222,11 +204,25 @@ class location : AppCompatActivity() {
                 result = result?.replace("]"," ")
                 result = result?.replace(" ","")
                 Log.d("testes", result.toString())
-                val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
+                productMainName.text = result.toString()
+                var resultEnglish = result.toString()
+                when (resultEnglish) {
+                    "디저트" -> {
+                        resultEnglish = "dessert"
+                    }
+                    "홈클린" -> {
+                        resultEnglish = "clean"
+                    }
+                    "의약외품" -> {
+                        resultEnglish = "drug"
+                    }
+                    "상온HMR" -> {
+                        resultEnglish = "hmr"
+                    }
+                }
+                Log.d("tested", resultEnglish)
 
-                //데이터 저장을 위한 객체를 추출
-                val saveObj = mySetting.edit()
-                saveObj.putString("main",result.toString())
+                mymqtt?.publish("android/imgName",resultEnglish)
 
                 ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
                         utteranceId)
@@ -240,7 +236,7 @@ class location : AppCompatActivity() {
                     utteranceId)
         }
 
-        nextButton.setOnLongClickListener {
+        complete.setOnLongClickListener {
             val searchIntent = Intent(this, MainActivity::class.java)
             ttsObj?.speak("메인 페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
@@ -250,7 +246,7 @@ class location : AppCompatActivity() {
 
     }
 
-    protected fun startLocationUpdates() {
+    private fun startLocationUpdates() {
         Log.d(TAG, "startLocationUpdates()")
 
         //FusedLocationProviderClient의 인스턴스를 생성.
@@ -295,7 +291,7 @@ class location : AppCompatActivity() {
     }
 
     // 위치 권한이 있는지 확인하는 메서드
-    fun checkPermissionForLocation(context: Context): Boolean {
+    private fun checkPermissionForLocation(context: Context): Boolean {
         Log.d(TAG, "checkPermissionForLocation()")
         // Android 6.0 Marshmallow 이상에서는 지리 확보(위치) 권한에 추가 런타임 권한이 필요합니다.
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -313,7 +309,7 @@ class location : AppCompatActivity() {
         }
     }
 
-    fun onReceived(topic:String,message: MqttMessage){
+    private fun onReceived(topic:String,message: MqttMessage){
         //토픽의 수신을 처리
         //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
         // 모션 detact가 전달되면 Notification도 발생시키기.....
@@ -326,7 +322,6 @@ class location : AppCompatActivity() {
                     utteranceId)
             Log.d("person","person")
         }
-
 
     }
 

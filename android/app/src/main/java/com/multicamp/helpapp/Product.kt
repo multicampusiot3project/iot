@@ -18,8 +18,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_location.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_product.*
 import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
@@ -57,7 +55,7 @@ class Product : AppCompatActivity() {
         //블커에서 메시지가 전달되면 호출될 메소드를 넘기기
         mymqtt?.mysetCallback(::onReceived)
         //브로커연결
-        mymqtt?.connect(arrayOf<String>(sub_topic)) //여기에 토픽 추가
+        mymqtt?.connect(arrayOf(sub_topic)) //여기에 토픽 추가
 
         ttsObj = TextToSpeech(this,TextToSpeech.OnInitListener {
             if(it!=TextToSpeech.ERROR){
@@ -127,12 +125,6 @@ class Product : AppCompatActivity() {
         //저장된 데이터 가져오기
         var data = "${pref.getString("main","")},"
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
-        data = data.replace(",","")
-        var filename = data
-        if(filename == "과자") {
-            filename = "snack"
-        }
-        Log.d("filename",filename)
         return "${sdf}.jpg"
     }
     private fun saveBitmapAsJPGFile(bitmap: Bitmap) {
@@ -163,7 +155,7 @@ class Product : AppCompatActivity() {
             null
         }}
 
-    fun onReceived(topic:String,message: MqttMessage){
+    private fun onReceived(topic:String, message: MqttMessage){
         //토픽의 수신을 처리
         //EditText에 내용을 출력하기, 영상출력, .... 도착된 메시지안에서 온도랑 습도 데이터를 이용해서 차트그리기,
         // 모션 detact가 전달되면 Notification도 발생시키기.....
@@ -185,23 +177,11 @@ class Product : AppCompatActivity() {
             Log.d("test",msg)
             val utteranceId = this.hashCode().toString() + "0"
             thread {
-                var jsonobj= JSONObject()
+                val jsonobj= JSONObject()
                 jsonobj.put("id","$massage")
                 val client= OkHttpClient()
                 val jsondata=jsonobj.toString()
                 val builder= Request.Builder()
-                val urls="http://13.52.187.248:8000/pictureName"
-                builder.url(urls)
-                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-                val myrequests: Request =builder.build()
-                val responses: Response =client.newCall(myrequests).execute()
-//                    val urls="http://13.52.187.248:8000/searchcount"
-//                    builder.url(urls)
-//                    builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
-//                    val myrequests: Request =builder.build()
-//                    val responses: Response =client.newCall(myrequests).execute()
-//                    var count:String?=responses.body()?.string()
-//                    count = count?.replace("\""," ")?.trim()
                 val url="http://13.52.187.248:8000/pictureName"
                 builder.url(url)
                 builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
@@ -232,6 +212,7 @@ class Product : AppCompatActivity() {
                 priceResult = priceResult?.replace("[","")
                 priceResult = priceResult?.replace("]","")
                 priceResult = priceResult?.replace(",","")
+                priceResult = priceResult?.replace(".",",")
 
                 val manufactureUrl="http://13.52.187.248:8000/pictureManufacture"
                 builder.url(manufactureUrl)
@@ -249,7 +230,8 @@ class Product : AppCompatActivity() {
                 manufactureResult = manufactureResult?.replace("]"," ")
                 manufactureResult = manufactureResult?.split(':').toString()
 
-                ttsObj?.speak("사진 찍은 제품은 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
+
+                ttsObj?.speak("사진 찍은 제품은 상품은 $result, 제조사는 $manufactureResult 가격은  $priceResult 원 입니다.",TextToSpeech.QUEUE_FLUSH,null, utteranceId)
 
             }
 
