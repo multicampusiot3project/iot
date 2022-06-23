@@ -17,15 +17,6 @@
         android:textSize="40dp"/>
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="상품 검색"
-        android:textSize="40dp"
-        tools:layout_editor_absoluteX="-2dp"
-        tools:layout_editor_absoluteY="47dp" />
-
-    <Button
         android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -42,15 +33,6 @@
         tools:layout_editor_absoluteX="-2dp"
         tools:layout_editor_absoluteY="47dp"
         android:textSize="40dp"/>
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="음성인식"
-        android:textSize="40dp"
-        tools:layout_editor_absoluteX="-2dp"
-        tools:layout_editor_absoluteY="47dp" />
 
 
 </LinearLayout>

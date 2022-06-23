@@ -49,20 +49,6 @@ class HomeActivity : AppCompatActivity() {
             false
         }
 
-        button2.setOnClickListener {
-
-            ttsObj?.speak("상품 검색 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-        }
-        button2.setOnLongClickListener {
-
-            val searchIntent = Intent(this, Product::class.java)
-            ttsObj?.speak("쇼핑 검색 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
-                utteranceId)
-            startActivity(searchIntent)
-            false
-        }
-
         button3.setOnClickListener {
 
             ttsObj?.speak("쇼핑 안내 화면으로 이동하는 버튼입니다. 꾹 누르면 쇼핑 안내 화면으로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
