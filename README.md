@@ -1,3 +1,5 @@
+# IOT part
+
 ## ****🖥 IoT Team****
 
 - [김진우](https://github.com/jinu12)
@@ -16,6 +18,7 @@
 
 ### **🕹 수행 방법▪도구**
 
+- 사용
 - 라이브러리 : (안드로이드) 카메라 api, mosquitto , android studio, arduino, sqllite
 - 언어 : python 3.8.4, kotlin
 - 센서 : pi camera v2 , hc sr04(초음파거리측정)
@@ -32,9 +35,15 @@
 
 ### iot 플로우 차트
 
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2c4b26f7-8969-49ba-90ec-7472dc7a418e/Untitled.png)
+
 ![https://user-images.githubusercontent.com/99372065/171769590-070f758a-f712-425c-bc76-2dcbff60eb6a.png](https://user-images.githubusercontent.com/99372065/171769590-070f758a-f712-425c-bc76-2dcbff60eb6a.png)
 
+## 클라우드 아키텍처
+
 ### 안드로이드 와이어 프레임
+
+[https://drive.google.com/file/d/1a3Ei98LtoAY8IDAtKYGZlSafnTqI163x/view?usp=sharing](https://drive.google.com/file/d/1a3Ei98LtoAY8IDAtKYGZlSafnTqI163x/view?usp=sharing)
 
 ## 🛒 1. 전체 시나리오
 
@@ -157,9 +166,8 @@
 - https://github.com/andreyukD/BLE-Beacon-Indoor-Positioning
 - https://github.com/neXenio/BLE-Indoor-Positioning
 - https://github.com/andreacanepa/Beacons-Indoor-Positioning-System : indoor-positioning
-- 깃허브 토픽 : https://github.com/topics/indoor-positioning
-
-[https://youtu.be/mijgQe3IdOk](https://youtu.be/mijgQe3IdOk)
+- 깃허브 토픽 : https://github.com/topics/indoor-positioning아
+- [아두이노(ESP32)를 비콘(iBeacon)으로 사용하기](https://www.youtube.com/watch?v=mijgQe3IdOk&t=376s)
 
 ### dwm 1000
 
@@ -173,7 +181,69 @@
 - [가장 유사 시스템](https://github.com/YoungJung93/Exit_Guidance)
 - [dwm 외국 프로젝트](https://medium.com/@newforestberlin/precise-realtime-indoor-localization-with-raspberry-pi-and-ultra-wideband-technology-decawave-191e4e2daa8c)
 - [dwm 외국 github 자료](https://github.com/gsongsong/dw1000-positioning)
+- [https://www.mouser.kr/ProductDetail/Qorvo/DWM1000?qs=TiOZkKH1s2R6b5D6df63Pg%3D%3D](https://www.mouser.kr/ProductDetail/Qorvo/DWM1000?qs=TiOZkKH1s2R6b5D6df63Pg%3D%3D)
+- [https://github.com/F-Army/arduino-dw1000-ng/tree/master/examples](https://github.com/F-Army/arduino-dw1000-ng/tree/master/examples)
+- [https://makernambo.com/162](https://makernambo.com/162)
 
 ## 안드로이드 관련 자료
 
 - [시각장애인 안드로이드 이용방법](https://www.youtube.com/watch?v=6jT-POAaB0c)
+- 안드로이드 이미지 인코딩,디코딩
+[https://imleaf.tistory.com/82](https://imleaf.tistory.com/82)
+
+## 📚 데이터 베이스
+
+![group3.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/05624464-e553-4091-8808-1df2f4650fc7/group3.png)
+
+## 🕹️ 기술 구현
+
+## 임베디드
+
+- [x]  거리 감지 센서를 이용해서 이미지 전달
+- [x]  mqtt 통신을 통해 aws s3 버킷파일에 이미지 전달
+
+## 안드로이드
+
+- [x]  안드로이드 tts 구현
+- [x]  aws에서 django rest api 를 통해 로그인 구현
+- [x]  안드로이드 쇼핑 리스트 작성
+- [x]  mqtt 통신을 통해 aws s3 버킷파일에 이미지 전달
+- [x]  tts로 모든 버튼이 1번 누르면 음성이 2번 거기에 해당되는 기능
+- [x]  mqtt로 ai에서 보낸 메시지를 음성으로 나오게
+- [x]  쇼핑리스트 작성된 쇼핑리스트를 mysql db에 전달
+
+## 🤖 수행과정
+
+[https://lh4.googleusercontent.com/denjHCCjjyL4JHxvpFrehnlBHAusIOo7573y8nM8hm5jR01MKelkTH_fo1DkruRLbZxu4lI4ZF5Q8gBd6wX2uJvFhoEZqeXhBvstAya_7JCZNxOGWWvJHc71K-H_TLdkG-4mF_BlChgvz1P-xitZvQ](https://lh4.googleusercontent.com/denjHCCjjyL4JHxvpFrehnlBHAusIOo7573y8nM8hm5jR01MKelkTH_fo1DkruRLbZxu4lI4ZF5Q8gBd6wX2uJvFhoEZqeXhBvstAya_7JCZNxOGWWvJHc71K-H_TLdkG-4mF_BlChgvz1P-xitZvQ)
+
+## dwm1000
+
+- 설치 비용 비쌈
+- 측위 오차 매우 낮음
+
+[https://lh3.googleusercontent.com/kqN00iwMKq6xFJ3G_9q1o8zkdfQ-qPTTPO9dTofZWWaKAyQUqfjFkBDA1WIFEwRRfjAPzp6QlA0Ag8Anlti-w4qDTiF-I6uj_rBJiAb7cOzdhayqRscYKEyWJrMGRamvkVSRkL17qmnIRS3WmZjd1w](https://lh3.googleusercontent.com/kqN00iwMKq6xFJ3G_9q1o8zkdfQ-qPTTPO9dTofZWWaKAyQUqfjFkBDA1WIFEwRRfjAPzp6QlA0Ag8Anlti-w4qDTiF-I6uj_rBJiAb7cOzdhayqRscYKEyWJrMGRamvkVSRkL17qmnIRS3WmZjd1w)
+
+## bluetooth / wifi
+
+- 핑거프린팅
+- 설치 비용 중간
+- 측위 오차 중간
+- 소요 시간 김
+    
+    [https://lh3.googleusercontent.com/mAaClfcqfgI5acW67f5FJSwqxF-eMF7wZKSDeJUrvr49PiyS_aF1VztObKsSGvsTOpfySw3jpJLa85qYQpej4lSppzPpy2ukTihaW9QjUHcKD7Ruxu4rzwXjni2b1zJErN6tZ8LJVwMWHhPGQPoT9A](https://lh3.googleusercontent.com/mAaClfcqfgI5acW67f5FJSwqxF-eMF7wZKSDeJUrvr49PiyS_aF1VztObKsSGvsTOpfySw3jpJLa85qYQpej4lSppzPpy2ukTihaW9QjUHcKD7Ruxu4rzwXjni2b1zJErN6tZ8LJVwMWHhPGQPoT9A)
+    
+
+## 카메라
+
+- 설치 비용 매우비쌈
+- 대상추적 어려움
+    
+    [https://lh4.googleusercontent.com/PaEfzbYuIBOEJo5tx7WnHL2JBk5ob2wHC92qVUW80PECoD8No7ehbRlinmpItBuGlnN31OvgS10Flp5axtZmDcqcfoaxd_QYfxNFlvG-qci9k21L9okw4vrlbbjkau4_OKQ4CGNuPS-0T9hiq0b6Jw](https://lh4.googleusercontent.com/PaEfzbYuIBOEJo5tx7WnHL2JBk5ob2wHC92qVUW80PECoD8No7ehbRlinmpItBuGlnN31OvgS10Flp5axtZmDcqcfoaxd_QYfxNFlvG-qci9k21L9okw4vrlbbjkau4_OKQ4CGNuPS-0T9hiq0b6Jw)
+    
+
+## gps
+
+- 설치 비용 없음
+- 측위 오차 매우 높음
+
+[]()
