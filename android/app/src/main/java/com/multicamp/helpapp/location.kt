@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import android.widget.Button
 import kotlinx.android.synthetic.main.activity_location.*
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.json.JSONObject
@@ -74,7 +75,7 @@ open class location : AppCompatActivity() {
             result = result?.replace(":","")
 
             Log.d("testes", result.toString())
-            productMainName.text = result.toString()
+            productMainName.text = "상품 매대 : " + result.toString()
             val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
 
             //데이터 저장을 위한 객체를 추출
@@ -103,6 +104,18 @@ open class location : AppCompatActivity() {
             ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
+
+//        val jsonobj=JSONObject()
+//        jsonobj.put("id",loginID.text)
+//        val client=OkHttpClient()
+//        val jsondata=jsonobj.toString()
+//        val builder= Request.Builder()
+//        val url="http://13.52.187.248:8000/start"
+//        builder.url(url)
+//        builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+//        val myrequest:Request=builder.build()
+//        val response:Response=client.newCall(myrequest).execute()
+//        Log.d("okay", response.toString())
 
         //Mqtt통신을 수행할 Mqtt객체를 생성
         mymqtt = MyMqtt(this, server_uri)
@@ -204,7 +217,7 @@ open class location : AppCompatActivity() {
                 result = result?.replace("]"," ")
                 result = result?.replace(" ","")
                 Log.d("testes", result.toString())
-                productMainName.text = result.toString()
+                productMainName.text = "상품 매대 : " + result.toString()
                 var resultEnglish = result.toString()
                 when (resultEnglish) {
                     "디저트" -> {
@@ -262,7 +275,7 @@ open class location : AppCompatActivity() {
                 result = result?.replace("]"," ")
                 result = result?.replace(" ","")
                 Log.d("testes", result.toString())
-                productMainName.text = result.toString()
+                productMainName.text = "상품 매대 : " + result.toString()
                 var resultEnglish = result.toString()
                 when (resultEnglish) {
                     "디저트" -> {
@@ -303,6 +316,7 @@ open class location : AppCompatActivity() {
             startActivity(searchIntent)
             false
         }
+
 
     }
 
