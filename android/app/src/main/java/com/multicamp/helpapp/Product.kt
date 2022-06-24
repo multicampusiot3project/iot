@@ -79,6 +79,11 @@ class Product : AppCompatActivity() {
             }
         }
 
+        btn2.setOnLongClickListener() {
+            ttsObj?.stop()
+            false
+        }
+
     }
 
     private fun checkPermissions(permissions: Array<String>, permissionsRequest: Int): Boolean {
@@ -235,6 +240,20 @@ class Product : AppCompatActivity() {
 
             }
 
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (ttsObj != null) {
+            ttsObj?.stop()
+            ttsObj?.shutdown()
+            ttsObj = null
+        }
+        if (recognizer != null) {
+            recognizer?.destroy()
+            recognizer?.cancel()
+            recognizer = null
         }
     }
 
