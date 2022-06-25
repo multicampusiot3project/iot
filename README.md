@@ -106,6 +106,23 @@
 4. 상세 설명 종료
 5. 구매 결정 / 선택 취소
 
+### 결과 화면 
+
+- 로그인 화면
+<img src = "https://user-images.githubusercontent.com/73889507/175760778-97686ee2-1203-4dd0-8b73-7f23ed9850d9.jpg" width="25%" >
+
+- 회원 가입 화면
+<img src = "https://user-images.githubusercontent.com/73889507/175760839-5e691adb-5a21-4ebb-be26-f5124544f89b.jpg" width="25%" >
+
+- 메인 화면
+<img src = "https://user-images.githubusercontent.com/73889507/175760835-73f3b573-bc9b-469a-ad80-524dc7f6873a.jpg" width="25%" >
+
+- 장바구니 화면
+<img src = "https://user-images.githubusercontent.com/73889507/175760831-4119b85d-4086-493b-a8e9-41b201d12b6e.jpg" width="25%" >
+
+- 쇼핑하기 화면
+<img src = "https://user-images.githubusercontent.com/73889507/175761027-8101793f-d2b8-4b57-930f-397aebcf3816.jpg" width="25%" >
+
 ### **📚 데이터**
 
 - pi camera v2  한개 필요하므로 기존 보유한 것으로 사용가능.
@@ -212,38 +229,5 @@
 - [x]  mqtt로 ai에서 보낸 메시지를 음성으로 나오게
 - [x]  쇼핑리스트 작성된 쇼핑리스트를 mysql db에 전달
 
-## 🤖 수행과정
 
-[https://lh4.googleusercontent.com/denjHCCjjyL4JHxvpFrehnlBHAusIOo7573y8nM8hm5jR01MKelkTH_fo1DkruRLbZxu4lI4ZF5Q8gBd6wX2uJvFhoEZqeXhBvstAya_7JCZNxOGWWvJHc71K-H_TLdkG-4mF_BlChgvz1P-xitZvQ](https://lh4.googleusercontent.com/denjHCCjjyL4JHxvpFrehnlBHAusIOo7573y8nM8hm5jR01MKelkTH_fo1DkruRLbZxu4lI4ZF5Q8gBd6wX2uJvFhoEZqeXhBvstAya_7JCZNxOGWWvJHc71K-H_TLdkG-4mF_BlChgvz1P-xitZvQ)
 
-## dwm1000
-
-- 설치 비용 비쌈
-- 측위 오차 매우 낮음
-
-[https://lh3.googleusercontent.com/kqN00iwMKq6xFJ3G_9q1o8zkdfQ-qPTTPO9dTofZWWaKAyQUqfjFkBDA1WIFEwRRfjAPzp6QlA0Ag8Anlti-w4qDTiF-I6uj_rBJiAb7cOzdhayqRscYKEyWJrMGRamvkVSRkL17qmnIRS3WmZjd1w](https://lh3.googleusercontent.com/kqN00iwMKq6xFJ3G_9q1o8zkdfQ-qPTTPO9dTofZWWaKAyQUqfjFkBDA1WIFEwRRfjAPzp6QlA0Ag8Anlti-w4qDTiF-I6uj_rBJiAb7cOzdhayqRscYKEyWJrMGRamvkVSRkL17qmnIRS3WmZjd1w)
-
-## bluetooth / wifi
-
-- 핑거프린팅
-- 설치 비용 중간
-- 측위 오차 중간
-- 소요 시간 김
-    
-    [https://lh3.googleusercontent.com/mAaClfcqfgI5acW67f5FJSwqxF-eMF7wZKSDeJUrvr49PiyS_aF1VztObKsSGvsTOpfySw3jpJLa85qYQpej4lSppzPpy2ukTihaW9QjUHcKD7Ruxu4rzwXjni2b1zJErN6tZ8LJVwMWHhPGQPoT9A](https://lh3.googleusercontent.com/mAaClfcqfgI5acW67f5FJSwqxF-eMF7wZKSDeJUrvr49PiyS_aF1VztObKsSGvsTOpfySw3jpJLa85qYQpej4lSppzPpy2ukTihaW9QjUHcKD7Ruxu4rzwXjni2b1zJErN6tZ8LJVwMWHhPGQPoT9A)
-    
-
-## 카메라
-
-- 설치 비용 매우비쌈
-- 대상추적 어려움
-    
-    [https://lh4.googleusercontent.com/PaEfzbYuIBOEJo5tx7WnHL2JBk5ob2wHC92qVUW80PECoD8No7ehbRlinmpItBuGlnN31OvgS10Flp5axtZmDcqcfoaxd_QYfxNFlvG-qci9k21L9okw4vrlbbjkau4_OKQ4CGNuPS-0T9hiq0b6Jw](https://lh4.googleusercontent.com/PaEfzbYuIBOEJo5tx7WnHL2JBk5ob2wHC92qVUW80PECoD8No7ehbRlinmpItBuGlnN31OvgS10Flp5axtZmDcqcfoaxd_QYfxNFlvG-qci9k21L9okw4vrlbbjkau4_OKQ4CGNuPS-0T9hiq0b6Jw)
-    
-
-## gps
-
-- 설치 비용 없음
-- 측위 오차 매우 높음
-
-[]()
