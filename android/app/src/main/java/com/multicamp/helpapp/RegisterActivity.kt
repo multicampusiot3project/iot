@@ -1,7 +1,6 @@
 package com.multicamp.helpapp
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register_tab.*
 import okhttp3.*
 import org.json.JSONObject
@@ -23,9 +21,9 @@ import kotlin.concurrent.thread
 
 class RegisterActivity : AppCompatActivity() {
     private var permission_state = false
-    var sttIntent: Intent? = null
-    var recognizer: SpeechRecognizer? = null
-    var ttsObj: TextToSpeech? = null
+    private var sttIntent: Intent? = null
+    private var recognizer: SpeechRecognizer? = null
+    private var ttsObj: TextToSpeech? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

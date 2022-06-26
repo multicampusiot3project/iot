@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
 import android.provider.MediaStore
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -29,21 +28,21 @@ import java.util.*
 import kotlin.concurrent.thread
 
 class Product : AppCompatActivity() {
-    val sub_topic = "android/#"
-    val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
-    var mymqtt : MyMqtt? = null
-    var imgCount = 0
-    var sttIntent: Intent? = null
-    var recognizer: SpeechRecognizer? = null
-    var ttsObj: TextToSpeech? = null
+    private val sub_topic = "android/#"
+    private val server_uri ="tcp://13.52.187.248:1883" //broker의 ip와 port
+    private var mymqtt : MyMqtt? = null
+    private var imgCount = 0
+    private var sttIntent: Intent? = null
+    private var recognizer: SpeechRecognizer? = null
+    private var ttsObj: TextToSpeech? = null
 
     // ViewBinding
     // Permisisons
-    val PERMISSIONS = arrayOf(
+    private val PERMISSIONS = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE    )
-    val PERMISSIONS_REQUEST = 100
+    private val PERMISSIONS_REQUEST = 100
     // Request Code
     private val BUTTON2 = 200
 
@@ -79,7 +78,7 @@ class Product : AppCompatActivity() {
             }
         }
 
-        btn2.setOnLongClickListener() {
+        btn2.setOnLongClickListener {
             ttsObj?.stop()
             false
         }
@@ -142,13 +141,13 @@ class Product : AppCompatActivity() {
         try{
             file.createNewFile()
             imageFile = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, imageFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, imageFile)
             Toast.makeText(this, file.absolutePath, Toast.LENGTH_LONG).show()
             Log.d("test",file.absolutePath)
 
 
             val stream:ByteArrayOutputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
             val imagedata :String = Base64.encodeToString(stream.toByteArray(),Base64.DEFAULT)
             Log.d("test",imagedata)
 

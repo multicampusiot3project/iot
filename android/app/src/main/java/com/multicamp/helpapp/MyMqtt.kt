@@ -44,7 +44,6 @@ class MyMqtt(context: Context, uri:String) {
                 //사용하고 싶어서 액티비티에 구현한 메소드를 호출할 예정
                 Log.d("mymqtt","messageArrived")
                 callback(topic!!,message!!)
-                //EditText작업???? 힘듬
             }
 
             override fun deliveryComplete(token: IMqttDeliveryToken?) {
@@ -64,7 +63,7 @@ class MyMqtt(context: Context, uri:String) {
         message.payload = Payload.toByteArray()
         message.qos =qos
         // 메시지 전송하기 (publish) = publish가 성공 / 실패하는 경우 이벤트가 발생하기 때문에 리스너 등록
-        // mqttClient.publish(topic.message) - 이 명령문처럼 publish해도 좋음
+        // mqttClient.publish(topic.message) - 이 명령문처럼 publish 해도 좋음
         // publish 후 콜백이 실행되도록 하고 싶다면
         mqttClient.publish(topic,message,null,object:IMqttActionListener{
             override fun onSuccess(asyncActionToken: IMqttToken?) {
