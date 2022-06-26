@@ -41,9 +41,10 @@
 
 ## 클라우드 아키텍처
 
-### 안드로이드 와이어 프레임
+![writing](https://user-images.githubusercontent.com/73889507/175838404-b7051618-9709-4fc1-aabb-bd2e564e15b9.jpg)
 
-[https://drive.google.com/file/d/1a3Ei98LtoAY8IDAtKYGZlSafnTqI163x/view?usp=sharing](https://drive.google.com/file/d/1a3Ei98LtoAY8IDAtKYGZlSafnTqI163x/view?usp=sharing)
+
+### 안드로이드 와이어 프레임
 
 ## 🛒 1. 전체 시나리오
 
@@ -210,7 +211,8 @@
 
 ## 📚 데이터 베이스
 
-![group3.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/05624464-e553-4091-8808-1df2f4650fc7/group3.png)
+![group3 (1)](https://user-images.githubusercontent.com/73889507/175838364-f2cc1b8b-f5a2-4808-8a24-6e56be5ae459.png)
+
 
 ## 🕹️ 기술 구현
 
