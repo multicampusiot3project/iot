@@ -52,6 +52,8 @@ class LoginActivity : AppCompatActivity(){
 
 
         val utteranceId = this.hashCode().toString() + "0"
+
+        // 아이디 버튼 한번 누를시 리스너
         loginID.setOnClickListener {
             ttsObj?.speak("아이디 입력 버튼입니다. 꾹 누르면 음성으로 아이디 입력이 가능합니다.", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
@@ -107,6 +109,8 @@ class LoginActivity : AppCompatActivity(){
             }
         })
 
+        // 아이디 버튼 꾹 누를시 리스너
+
         loginID.setOnLongClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(idListener)
@@ -114,11 +118,14 @@ class LoginActivity : AppCompatActivity(){
             false
         }
 
+        // 회원가입 버튼 한번 누를시 리스너
         register.setOnClickListener {
 
             ttsObj?.speak("회원가입 페이지로 이동하는 버튼입니다. 꾹 누르면 회원가입 페이지로 이동합니다", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
+
+        // 회원가입 버튼 꾹 누를시 리스너
         register.setOnLongClickListener {
 
             val registerIntent = Intent(this, RegisterActivity::class.java)
@@ -178,11 +185,13 @@ class LoginActivity : AppCompatActivity(){
             }
         })
 
+        // 아이디 한번 누를시 리스너
         loginPW.setOnClickListener {
             ttsObj?.speak("비밀번호 입력 버튼입니다. 꾹 누르면 음성으로 비밀번호 입력이 가능합니다", TextToSpeech.QUEUE_FLUSH,null,
                 utteranceId)
         }
 
+        // 비밀번호 버튼 꾹 누를시 리스너
         loginPW.setOnLongClickListener {
             recognizer = SpeechRecognizer.createSpeechRecognizer(this)
             recognizer?.setRecognitionListener(pwListener)
@@ -190,7 +199,7 @@ class LoginActivity : AppCompatActivity(){
             false
         }
 
-
+        // 로그인 버튼 누를시 리스너
         loginSubmit.setOnClickListener {
             thread{
                 val jsonobj=JSONObject()

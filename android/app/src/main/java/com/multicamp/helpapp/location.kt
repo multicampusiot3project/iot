@@ -75,7 +75,7 @@ open class location : AppCompatActivity() {
             result = result?.replace(":","")
 
             Log.d("testes", result.toString())
-            productMainName.text = "상품 매대 : " + result.toString()
+            productMainName.text = "상품 매대 : " + count.toString() + ". " + result.toString()
             val mySetting = getSharedPreferences("network_conf", Context.MODE_PRIVATE)
 
             //데이터 저장을 위한 객체를 추출
@@ -103,6 +103,7 @@ open class location : AppCompatActivity() {
 
             ttsObj?.speak("보실 상품은 $result 매대에 있습니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
+            ttsObj?.stop()
         }
 
 //        val jsonobj=JSONObject()
@@ -217,7 +218,7 @@ open class location : AppCompatActivity() {
                 result = result?.replace("]"," ")
                 result = result?.replace(" ","")
                 Log.d("testes", result.toString())
-                productMainName.text = "상품 매대 : " + result.toString()
+                productMainName.text = "상품 매대 : " + count.toString() + ". " + result.toString()
                 var resultEnglish = result.toString()
                 when (resultEnglish) {
                     "디저트" -> {
@@ -245,11 +246,13 @@ open class location : AppCompatActivity() {
         }
 
         beforeButton.setOnClickListener {
+            ttsObj?.stop()
             ttsObj?.speak("이전 리스트로 이동하는 버튼입니다. 꾹 누르면 다음를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
         }
 
         beforeButton.setOnLongClickListener {
+            ttsObj?.stop()
             count -= 1
             ttsObj?.speak("이전 안내를 시작합니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
@@ -275,7 +278,7 @@ open class location : AppCompatActivity() {
                 result = result?.replace("]"," ")
                 result = result?.replace(" ","")
                 Log.d("testes", result.toString())
-                productMainName.text = "상품 매대 : " + result.toString()
+                productMainName.text = "상품 매대 : " + count.toString() + ". " + result.toString()
                 var resultEnglish = result.toString()
                 when (resultEnglish) {
                     "디저트" -> {
@@ -310,8 +313,55 @@ open class location : AppCompatActivity() {
         }
 
         complete.setOnLongClickListener {
+//            thread {
+//                var jsonobj= JSONObject()
+//                jsonobj.put("lno",count)
+//                val client= OkHttpClient()
+//                val jsondata=jsonobj.toString()
+//                val builder= Request.Builder()
+//                val url="http://13.52.187.248:8000/dellist"
+//                builder.url(url)
+//                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+//                val myrequest: Request =builder.build()
+//                val response: Response =client.newCall(myrequest).execute()
+//                var result:String?=response.body()?.string()
+//                result = result?.replace("\""," ")?.trim()
+//                result = result?.replace("{", " ")
+//                result = result?.replace("}"," ")
+//                result = result?.replace("["," ")
+//                result = result?.replace("]"," ")
+//                result = result?.replace("main", "")
+//                result = result?.replace("["," ")
+//                result = result?.replace("]"," ")
+//                result = result?.replace(" ","")
+//                Log.d("del", result.toString())
+//            }
+//
+//            thread {
+//                var jsonobj= JSONObject()
+//                jsonobj.put("lno",count)
+//                val client= OkHttpClient()
+//                val jsondata=jsonobj.toString()
+//                val builder= Request.Builder()
+//                val url="http://13.52.187.248:8000/updateprimary"
+//                builder.url(url)
+//                builder.post(RequestBody.create(MediaType.parse("application/json"),jsondata))
+//                val myrequest: Request =builder.build()
+//                val response: Response =client.newCall(myrequest).execute()
+//                var result:String?=response.body()?.string()
+//                result = result?.replace("\""," ")?.trim()
+//                result = result?.replace("{", " ")
+//                result = result?.replace("}"," ")
+//                result = result?.replace("["," ")
+//                result = result?.replace("]"," ")
+//                result = result?.replace("main", "")
+//                result = result?.replace("["," ")
+//                result = result?.replace("]"," ")
+//                result = result?.replace(" ","")
+//                Log.d("count", result.toString())
+//            }
             val searchIntent = Intent(this, HomeActivity::class.java)
-            ttsObj?.speak("메인 페이지로 이동합니다.", TextToSpeech.QUEUE_FLUSH,null,
+            ttsObj?.speak("쇼핑을 완료했습니다.", TextToSpeech.QUEUE_FLUSH,null,
                     utteranceId)
             startActivity(searchIntent)
             false
@@ -391,11 +441,37 @@ open class location : AppCompatActivity() {
         val massage = String(message.payload, Charset.forName("UTF-8"))
         val massage2 = String(message.payload, Charset.forName("EUC-kR"))
         val utteranceId = this.hashCode().toString() + "0"
-        if(msg == "person") {
-            ttsObj?.speak("전방에 사람이 있습니다", TextToSpeech.QUEUE_FLUSH,null,
-                    utteranceId)
-            Log.d("person","person")
+        when (msg) {
+            "person" -> {
+                ttsObj?.speak("전방에 사람이 있습니다", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+                Log.d("person","person")
+            }
+            "left" -> {
+                ttsObj?.speak("왼쪽 물체", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+                Log.d("left","left")
+            }
+            "right" -> {
+                ttsObj?.speak("오른쪽 물체", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+                Log.d("right","right")
+            }
+            "both" -> {
+                ttsObj?.speak("양쪽 물체", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+                Log.d("both","both")
+            }
+            "forward" -> {
+                ttsObj?.speak("전방 물체", TextToSpeech.QUEUE_FLUSH,null,
+                        utteranceId)
+                Log.d("forward","forward")
+            }
+             else -> {
+                ttsObj?.stop()
+            }
         }
+        
 
     }
 
